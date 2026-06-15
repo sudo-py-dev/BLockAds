@@ -1,32 +1,44 @@
 package com.blockads.app.ui.home
 
 import android.app.Activity
+import android.content.Intent
 import android.net.VpnService
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Shield
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -43,6 +55,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.blockads.app.domain.model.VpnState
@@ -58,6 +72,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val vpnState by viewModel.vpnState.collectAsState()
     val stats by viewModel.stats.collectAsState()
     val settings by viewModel.settings.collectAsState()
+    val isPrivateDnsStrict by viewModel.isPrivateDnsStrict.collectAsState()
     val context = LocalContext.current
 
     val vpnPermissionLauncher =
@@ -71,16 +86,17 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {
                     Text(
                         text = strings.appName,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
                     )
                 },
                 colors =
                     TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
+                        containerColor = MaterialTheme.colorScheme.background,
                     ),
             )
         },
@@ -90,11 +106,10 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(horizontal = Spacing.md),
+                    .padding(horizontal = Spacing.lg),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Spacing.lg),
         ) {
-            Spacer(Modifier.height(Spacing.xl))
+            Spacer(Modifier.height(Spacing.lg))
 
             // Status chip
             AnimatedContent(
@@ -115,20 +130,64 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     enabled = false,
                     label = { Text(label, style = MaterialTheme.typography.labelLarge) },
                     leadingIcon = {
-                        Icon(Icons.Rounded.Shield, contentDescription = null)
+                        Icon(
+                            imageVector = Icons.Rounded.Shield,
+                            contentDescription = null,
+                            modifier = Modifier.size(AssistChipDefaults.IconSize),
+                        )
                     },
                     colors =
                         AssistChipDefaults.assistChipColors(
-                            disabledContainerColor = color.copy(alpha = 0.12f),
+                            disabledContainerColor = color.copy(alpha = 0.08f),
                             disabledLabelColor = color,
                             disabledLeadingIconContentColor = color,
                         ),
                     border =
                         AssistChipDefaults.assistChipBorder(
                             enabled = false,
-                            disabledBorderColor = color.copy(alpha = 0.3f),
+                            disabledBorderColor = color.copy(alpha = 0.2f),
                         ),
+                    shape = MaterialTheme.shapes.medium,
                 )
+            }
+
+            Spacer(Modifier.height(Spacing.xl))
+
+            AnimatedVisibility(
+                visible = isPrivateDnsStrict && vpnState == VpnState.ACTIVE,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut(),
+            ) {
+                ElevatedCard(
+                    colors = CardDefaults.elevatedCardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                    ),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.xl)
+                ) {
+                    Column(modifier = Modifier.padding(Spacing.lg)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Rounded.Warning, contentDescription = null)
+                            Spacer(Modifier.width(Spacing.sm))
+                            Text(strings.privateDnsWarningTitle, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        }
+                        Spacer(Modifier.height(Spacing.sm))
+                        Text(strings.privateDnsWarningMessage, style = MaterialTheme.typography.bodyMedium)
+                        Spacer(Modifier.height(Spacing.md))
+                        Button(
+                            onClick = {
+                                context.startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.onErrorContainer,
+                                contentColor = MaterialTheme.colorScheme.errorContainer
+                            ),
+                            modifier = Modifier.align(Alignment.End)
+                        ) {
+                            Text(strings.privateDnsActionSettings)
+                        }
+                    }
+                }
             }
 
             // Power toggle
@@ -154,6 +213,8 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     },
             )
 
+            Spacer(Modifier.height(Spacing.lg))
+
             Text(
                 text =
                     when (vpnState) {
@@ -162,64 +223,105 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                         VpnState.ERROR -> strings.vpnError
                         VpnState.STOPPED -> strings.tapToStart
                     },
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = FontWeight.Medium,
             )
 
-            // Pause / Resume UI
-            if (vpnState == VpnState.ACTIVE) {
-                var showPauseMenu by remember { mutableStateOf(false) }
-                Box {
-                    OutlinedButton(onClick = { showPauseMenu = true }) {
-                        Icon(Icons.Rounded.Pause, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text(strings.pauseVpn)
-                    }
-                    DropdownMenu(
-                        expanded = showPauseMenu,
-                        onDismissRequest = { showPauseMenu = false },
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text(strings.pauseFor15m) },
-                            onClick = {
-                                showPauseMenu = false
-                                viewModel.pauseVpn(context, 15 * 60 * 1000L)
-                            },
-                        )
-                        DropdownMenuItem(
-                            text = { Text(strings.pauseFor1h) },
-                            onClick = {
-                                showPauseMenu = false
-                                viewModel.pauseVpn(context, 60 * 60 * 1000L)
-                            },
-                        )
-                    }
-                }
-            } else if (vpnState == VpnState.PAUSED) {
-                Button(onClick = { viewModel.resumeVpn(context) }) {
-                    Icon(Icons.Rounded.PlayArrow, contentDescription = null)
-                    Spacer(Modifier.width(8.dp))
-                    Text(strings.resumeVpn)
-                }
-            }
+            Spacer(Modifier.weight(1f))
 
             // Stats card — only when active or paused
-            if (vpnState == VpnState.ACTIVE || vpnState == VpnState.PAUSED || stats.blockedCount > 0) {
-                StatsCard(
-                    stats = stats,
-                    strings = strings,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+            AnimatedVisibility(
+                visible = vpnState == VpnState.ACTIVE || vpnState == VpnState.PAUSED || stats.blockedCount > 0,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut(),
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    StatsCard(
+                        stats = stats,
+                        strings = strings,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    Spacer(Modifier.height(Spacing.lg))
+                }
             }
 
-            Spacer(Modifier.height(Spacing.md))
+            // Pause / Resume UI
+            AnimatedVisibility(
+                visible = vpnState == VpnState.ACTIVE,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut(),
+            ) {
+                var showPauseMenu by remember { mutableStateOf(false) }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Box {
+                        OutlinedButton(
+                            onClick = { showPauseMenu = true },
+                            shape = MaterialTheme.shapes.large,
+                            modifier = Modifier.fillMaxWidth(0.9f)
+                        ) {
+                            Icon(Icons.Rounded.Pause, contentDescription = null)
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = strings.pauseVpn,
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = showPauseMenu,
+                            onDismissRequest = { showPauseMenu = false },
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(strings.pauseFor15m) },
+                                onClick = {
+                                    showPauseMenu = false
+                                    viewModel.pauseVpn(context, 15 * 60 * 1000L)
+                                },
+                            )
+                            DropdownMenuItem(
+                                text = { Text(strings.pauseFor1h) },
+                                onClick = {
+                                    showPauseMenu = false
+                                    viewModel.pauseVpn(context, 60 * 60 * 1000L)
+                                },
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(Spacing.lg))
+                }
+            }
+
+            AnimatedVisibility(
+                visible = vpnState == VpnState.PAUSED,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut(),
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Button(
+                        onClick = { viewModel.resumeVpn(context) },
+                        shape = MaterialTheme.shapes.large,
+                        modifier = Modifier.fillMaxWidth(0.9f)
+                    ) {
+                        Icon(Icons.Rounded.PlayArrow, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = strings.resumeVpn,
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                    Spacer(Modifier.height(Spacing.lg))
+                }
+            }
 
             // Current blocklist info
             settings?.let { s ->
                 Text(
                     text = "${strings.currentBlocklist}: ${s.blocklistSource.key}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    modifier = Modifier.padding(bottom = Spacing.lg),
                 )
             }
         }

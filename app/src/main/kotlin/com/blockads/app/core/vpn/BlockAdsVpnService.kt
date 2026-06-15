@@ -155,8 +155,11 @@ class BlockAdsVpnService : VpnService() {
     private fun establishTun(settings: AppSettings): ParcelFileDescriptor {
         return Builder()
             .addAddress(VPN_ADDRESS, 32)
+            .addAddress("fd00:33:33::1", 128)
             .addDnsServer(VPN_DNS)
+            .addDnsServer("fd00:33:33::1")
             .addRoute("0.0.0.0", 0)
+            .addRoute("::", 0)
             .setMtu(MTU)
             .setSession("BlockAds")
             .establish() ?: error("VpnService.Builder.establish() returned null")
@@ -178,14 +181,26 @@ class BlockAdsVpnService : VpnService() {
                 val len = input.read(buffer)
                 if (len <= 0) continue
 
-                // Check if it's an IPv4 packet (first nibble is 4)
-                if ((buffer[0].toInt() and 0xF0) != 0x40) continue
-                
-                // Protocol is at offset 9, UDP is 17
-                if (buffer[9].toInt() != 17) continue
+                val version = (buffer[0].toInt() and 0xF0) shr 4
+                val isIpv4 = version == 4
+                val isIpv6 = version == 6
 
-                val ihl = (buffer[0].toInt() and 0x0F) * 4
-                if (ihl < 20 || len < ihl + 8) continue
+                if (!isIpv4 && !isIpv6) continue
+
+                val protocol: Int
+                val ihl: Int
+                if (isIpv4) {
+                    protocol = buffer[9].toInt() and 0xFF
+                    ihl = (buffer[0].toInt() and 0x0F) * 4
+                } else {
+                    // IPv6 fixed header is 40 bytes. Next Header is at offset 6.
+                    protocol = buffer[6].toInt() and 0xFF
+                    ihl = 40
+                }
+
+                if (protocol != 17) continue // UDP only
+
+                if (len < ihl + 8) continue
 
                 val destPort = ((buffer[ihl + 2].toInt() and 0xFF) shl 8) or (buffer[ihl + 3].toInt() and 0xFF)
                 if (destPort != 53) continue
@@ -198,16 +213,17 @@ class BlockAdsVpnService : VpnService() {
                 when (val result = DnsPacketParser.parseQuery(dnsQuery)) {
                     is ParseResult.Success -> {
                         val isPaused = _vpnState.value == VpnState.PAUSED && System.currentTimeMillis() < pauseUntilMs
-                        val dnsResponse = if (!isPaused && blocklistRepository.isDomainBlocked(result.domain)) {
-                            _stats.update { it.copy(blockedCount = it.blockedCount + 1) }
-                            DnsResponseBuilder.nxdomain(result.txId, dnsQuery)
-                        } else {
-                            _stats.update { it.copy(forwardedCount = it.forwardedCount + 1) }
-                            dnsResolver.forward(dnsQuery, primary, secondary)
-                        }
+                        val dnsResponse =
+                            if (!isPaused && blocklistRepository.isDomainBlocked(result.domain)) {
+                                _stats.update { it.copy(blockedCount = it.blockedCount + 1) }
+                                DnsResponseBuilder.nxdomain(result.txId, dnsQuery)
+                            } else {
+                                _stats.update { it.copy(forwardedCount = it.forwardedCount + 1) }
+                                dnsResolver.forward(dnsQuery, primary, secondary)
+                            }
 
                         if (dnsResponse != null) {
-                            val ipResponse = wrapInIpUdp(buffer, len, dnsResponse)
+                            val ipResponse = wrapInIpUdp(buffer, len, dnsResponse, isIpv4)
                             if (ipResponse != null) {
                                 output.write(ipResponse)
                             }
@@ -326,29 +342,115 @@ class BlockAdsVpnService : VpnService() {
         originalPacket: ByteArray,
         originalLen: Int,
         dnsPayload: ByteArray,
+        isIpv4: Boolean,
     ): ByteArray? {
-        val ihl = (originalPacket[0].toInt() and 0x0F) * 4
+        val ihl = if (isIpv4) (originalPacket[0].toInt() and 0x0F) * 4 else 40
         val udpLen = 8 + dnsPayload.size
         val ipLen = ihl + udpLen
         val packet = ByteArray(ipLen)
 
-        System.arraycopy(originalPacket, 0, packet, 0, ihl)
-        packet[2] = (ipLen shr 8).toByte()
-        packet[3] = (ipLen and 0xFF).toByte()
-        System.arraycopy(originalPacket, 12, packet, 16, 4)
-        System.arraycopy(originalPacket, 16, packet, 12, 4)
-        packet[10] = 0
-        packet[11] = 0
+        if (isIpv4) {
+            System.arraycopy(originalPacket, 0, packet, 0, ihl)
+            packet[2] = (ipLen shr 8).toByte()
+            packet[3] = (ipLen and 0xFF).toByte()
+            // Swap source and dest IP
+            System.arraycopy(originalPacket, 12, packet, 16, 4)
+            System.arraycopy(originalPacket, 16, packet, 12, 4)
+            packet[10] = 0 // Clear checksum for simplicity (OS will often fix or ignore if small)
+            packet[11] = 0
+        } else {
+            System.arraycopy(originalPacket, 0, packet, 0, ihl)
+            val payloadLen = udpLen
+            packet[4] = (payloadLen shr 8).toByte()
+            packet[5] = (payloadLen and 0xFF).toByte()
+            // Swap source and dest IPv6 addresses (16 bytes each)
+            System.arraycopy(originalPacket, 8, packet, 24, 16)
+            System.arraycopy(originalPacket, 24, packet, 8, 16)
+        }
+
+        // Swap ports
         packet[ihl] = originalPacket[ihl + 2]
         packet[ihl + 1] = originalPacket[ihl + 3]
         packet[ihl + 2] = originalPacket[ihl]
         packet[ihl + 3] = originalPacket[ihl + 1]
+
         packet[ihl + 4] = (udpLen shr 8).toByte()
         packet[ihl + 5] = (udpLen and 0xFF).toByte()
         packet[ihl + 6] = 0
         packet[ihl + 7] = 0
 
         System.arraycopy(dnsPayload, 0, packet, ihl + 8, dnsPayload.size)
+
+        // Calculate UDP checksum (mandatory for IPv6, optional but good for IPv4)
+        val checksum = calculateUdpChecksum(packet, ihl, isIpv4)
+        packet[ihl + 6] = (checksum shr 8).toByte()
+        packet[ihl + 7] = (checksum and 0xFF).toByte()
+
         return packet
+    }
+
+    private fun calculateUdpChecksum(
+        packet: ByteArray,
+        ihl: Int,
+        isIpv4: Boolean,
+    ): Int {
+        val udpLen = ((packet[ihl + 4].toInt() and 0xFF) shl 8) or (packet[ihl + 5].toInt() and 0xFF)
+        var sum = 0L
+
+        // Pseudo-header
+        if (isIpv4) {
+            // Source IP (4 bytes)
+            sum += ((packet[12].toInt() and 0xFF) shl 8) or (packet[13].toInt() and 0xFF)
+            sum += ((packet[14].toInt() and 0xFF) shl 8) or (packet[15].toInt() and 0xFF)
+            // Dest IP (4 bytes)
+            sum += ((packet[16].toInt() and 0xFF) shl 8) or (packet[17].toInt() and 0xFF)
+            sum += ((packet[18].toInt() and 0xFF) shl 8) or (packet[19].toInt() and 0xFF)
+            // Protocol (17)
+            sum += 17
+            // UDP Length
+            sum += udpLen
+        } else {
+            // Source IPv6 (16 bytes)
+            for (i in 0 until 8) {
+                sum += ((packet[8 + i * 2].toInt() and 0xFF) shl 8) or (packet[9 + i * 2].toInt() and 0xFF)
+            }
+            // Dest IPv6 (16 bytes)
+            for (i in 0 until 8) {
+                sum += ((packet[24 + i * 2].toInt() and 0xFF) shl 8) or (packet[25 + i * 2].toInt() and 0xFF)
+            }
+            // UDP Length (4 bytes in pseudo-header for IPv6)
+            sum += udpLen
+            // Next Header (17)
+            sum += 17
+        }
+
+        // UDP Header + Payload
+        var i = ihl
+        var remaining = udpLen
+        // Ensure checksum field is 0 before calculation (already 0 from wrapInIpUdp, but for clarity)
+        packet[ihl + 6] = 0
+        packet[ihl + 7] = 0
+
+        while (remaining > 1) {
+            sum += ((packet[i].toInt() and 0xFF) shl 8) or (packet[i + 1].toInt() and 0xFF)
+            i += 2
+            remaining -= 2
+        }
+        if (remaining > 0) {
+            sum += (packet[i].toInt() and 0xFF) shl 8
+        }
+
+        while ((sum shr 16) != 0L) {
+            sum = (sum and 0xFFFFL) + (sum shr 16)
+        }
+
+        val finalSum = (sum.inv() and 0xFFFFL).toInt()
+        return if (finalSum == 0 && !isIpv4) {
+            0xFFFF
+        } else if (finalSum == 0) {
+            0
+        } else {
+            finalSum
+        }
     }
 }

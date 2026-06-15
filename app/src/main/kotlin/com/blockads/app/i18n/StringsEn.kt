@@ -15,7 +15,10 @@ object StringsEn : LocalizedStrings {
     override val sessionUptime = "Uptime"
     override val tapToStart = "Tap to enable protection"
     override val tapToStop = "Tap to disable protection"
-    override val currentBlocklist = "Blocklist"
+    override val currentBlocklist = "Current Blocklist"
+    override val privateDnsWarningTitle = "Private DNS Detected"
+    override val privateDnsWarningMessage = "A strict Private DNS is active on your device. This overrides BlockAds and prevents ad blocking. Please set Private DNS to 'Automatic' or 'Off' in your device settings."
+    override val privateDnsActionSettings = "Open Settings"
 
     override val pauseVpn = "Pause VPN"
     override val resumeVpn = "Resume"

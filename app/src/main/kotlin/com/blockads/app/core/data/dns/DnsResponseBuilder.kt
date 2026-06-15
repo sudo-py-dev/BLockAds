@@ -8,7 +8,6 @@ object DnsResponseBuilder {
         txId: Short,
         querySection: ByteArray,
     ): ByteArray {
-
         val flags: Short = 0x8183.toShort()
 
         val qSectionSize = querySection.size - 12

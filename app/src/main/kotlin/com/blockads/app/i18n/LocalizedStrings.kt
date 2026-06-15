@@ -18,6 +18,9 @@ interface LocalizedStrings {
     val tapToStart: String
     val tapToStop: String
     val currentBlocklist: String
+    val privateDnsWarningTitle: String
+    val privateDnsWarningMessage: String
+    val privateDnsActionSettings: String
 
     // Pause VPN
     val pauseVpn: String

@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.BugReport
 import androidx.compose.material.icons.rounded.Code
-import androidx.compose.material.icons.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Security
 import androidx.compose.material3.CardDefaults
@@ -151,7 +151,7 @@ fun AboutScreen() {
                         },
                         trailingContent = {
                             Icon(
-                                Icons.Rounded.OpenInNew,
+                                Icons.AutoMirrored.Rounded.OpenInNew,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -173,7 +173,7 @@ fun AboutScreen() {
                         },
                         trailingContent = {
                             Icon(
-                                Icons.Rounded.OpenInNew,
+                                Icons.AutoMirrored.Rounded.OpenInNew,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -207,7 +207,7 @@ fun AboutScreen() {
                             supportingContent = { Text(lib.license) },
                             trailingContent = {
                                 Icon(
-                                    Icons.Rounded.OpenInNew,
+                                    Icons.AutoMirrored.Rounded.OpenInNew,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )

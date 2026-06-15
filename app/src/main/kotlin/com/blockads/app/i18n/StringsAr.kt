@@ -5,7 +5,7 @@ object StringsAr : LocalizedStrings {
     override val navSettings = "الإعدادات"
     override val navAbout = "حول"
 
-    override val appName = "BlockAds"
+    override val appName = "مانع الإعلانات"
     override val vpnActive = "الحماية نشطة"
     override val vpnStopped = "الحماية معطلة"
     override val vpnConnecting = "جارٍ الاتصال…"
@@ -16,6 +16,9 @@ object StringsAr : LocalizedStrings {
     override val tapToStart = "انقر لتمكين الحماية"
     override val tapToStop = "انقر لتعطيل الحماية"
     override val currentBlocklist = "قائمة الحظر"
+    override val privateDnsWarningTitle = "تم اكتشاف DNS خاص"
+    override val privateDnsWarningMessage = "تم تفعيل DNS خاص (Strict) على جهازك. هذا يتجاوز BlockAds ويمنع حظر الإعلانات. يرجى ضبط DNS الخاص على 'تلقائي' أو 'إيقاف' في إعدادات جهازك."
+    override val privateDnsActionSettings = "افتح الإعدادات"
 
     override val pauseVpn = "إيقاف مؤقت للشبكة"
     override val resumeVpn = "استئناف"

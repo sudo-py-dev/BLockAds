@@ -5,7 +5,7 @@ object StringsEs : LocalizedStrings {
     override val navSettings = "Ajustes"
     override val navAbout = "Acerca de"
 
-    override val appName = "BlockAds"
+    override val appName = "Bloqueador de Anuncios"
     override val vpnActive = "Protección activa"
     override val vpnStopped = "Protección desactivada"
     override val vpnConnecting = "Conectando…"
@@ -16,6 +16,9 @@ object StringsEs : LocalizedStrings {
     override val tapToStart = "Toca para activar la protección"
     override val tapToStop = "Toca para desactivar la protección"
     override val currentBlocklist = "Lista de bloqueo"
+    override val privateDnsWarningTitle = "DNS privado detectado"
+    override val privateDnsWarningMessage = "Un DNS privado estricto está activo en su dispositivo. Esto anula BlockAds y evita el bloqueo de anuncios. Por favor, configure el DNS privado en 'Automático' o 'Desactivado' en los ajustes de su dispositivo."
+    override val privateDnsActionSettings = "Abrir ajustes"
 
     override val pauseVpn = "Pausar VPN"
     override val resumeVpn = "Reanudar"

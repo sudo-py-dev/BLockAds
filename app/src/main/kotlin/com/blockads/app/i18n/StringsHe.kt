@@ -5,7 +5,7 @@ object StringsHe : LocalizedStrings {
     override val navSettings = "הגדרות"
     override val navAbout = "אודות"
 
-    override val appName = "BlockAds"
+    override val appName = "חוסם פרסומות"
     override val vpnActive = "הגנה פעילה"
     override val vpnStopped = "הגנה כבויה"
     override val vpnConnecting = "מתחבר…"
@@ -16,6 +16,9 @@ object StringsHe : LocalizedStrings {
     override val tapToStart = "הקש להפעלת ההגנה"
     override val tapToStop = "הקש לכיבוי ההגנה"
     override val currentBlocklist = "רשימת חסימה"
+    override val privateDnsWarningTitle = "זוהה DNS פרטי"
+    override val privateDnsWarningMessage = "DNS פרטי (Strict) מופעל במכשירך. זה עוקף את BlockAds ומונע חסימת פרסומות. אנא הגדר DNS פרטי ל-'אוטומטי' או 'כבוי' בהגדרות המכשיר."
+    override val privateDnsActionSettings = "פתח הגדרות"
 
     override val pauseVpn = "השהה VPN"
     override val resumeVpn = "המשך"

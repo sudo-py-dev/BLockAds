@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import com.blockads.app.ui.theme.Spacing
 
 @Composable
@@ -15,13 +16,15 @@ fun SectionHeader(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = title,
-        style = MaterialTheme.typography.labelLarge,
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.primary,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Bold,
+        letterSpacing = 1.2.sp,
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(start = Spacing.md, top = Spacing.lg, bottom = Spacing.xs),
+                .padding(horizontal = Spacing.md)
+                .padding(top = Spacing.lg, bottom = Spacing.xs),
     )
 }

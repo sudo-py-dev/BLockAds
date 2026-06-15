@@ -1,5 +1,6 @@
 package com.blockads.app.ui.home
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModel
@@ -10,8 +11,11 @@ import com.blockads.app.domain.model.AppSettings
 import com.blockads.app.domain.model.DnsStats
 import com.blockads.app.domain.model.VpnState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.blockads.app.core.util.DnsSettingsHelper
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -19,6 +23,7 @@ import javax.inject.Inject
 class HomeViewModel
     @Inject
     constructor(
+        private val application: Application,
         private val settingsRepository: SettingsRepository,
     ) : ViewModel() {
         val vpnState: StateFlow<VpnState> = BlockAdsVpnService.vpnState
@@ -28,6 +33,14 @@ class HomeViewModel
         val settings: StateFlow<AppSettings?> =
             settingsRepository.appSettings
                 .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+        val isPrivateDnsStrict: StateFlow<Boolean> =
+            flow {
+                while (true) {
+                    emit(DnsSettingsHelper.isPrivateDnsStrict(application))
+                    delay(3000)
+                }
+            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
 
         fun startVpn(context: Context) {
             val intent =

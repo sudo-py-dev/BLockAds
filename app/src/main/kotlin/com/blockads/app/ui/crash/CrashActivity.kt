@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -46,8 +47,6 @@ import com.blockads.app.ui.theme.BlockAdsTheme
 import com.blockads.app.ui.theme.Spacing
 import kotlinx.coroutines.launch
 import java.util.Locale
-
-import android.view.WindowManager
 
 class CrashActivity : ComponentActivity() {
     companion object {

@@ -1,6 +1,7 @@
 package com.blockads.app
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,8 +20,6 @@ import com.blockads.app.ui.settings.SettingsViewModel
 import com.blockads.app.ui.theme.BlockAdsTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
-
-import android.view.WindowManager
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

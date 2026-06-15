@@ -1,6 +1,6 @@
 package com.blockads.app.core.data.blocklist
 
-private val DOMAIN_REGEX = Regex("^[a-z0-9]([a-z0-9._-]{0,251}[a-z0-9])?$")
+private val DOMAIN_REGEX = Regex("^(?=.{1,253}$)(?:(?!-)[a-z0-9-]{1,63}(?<!-)\\.)*(?!-)[a-z0-9-]{1,63}(?<!-)$")
 private val PRINTABLE_REGEX = Regex("^[ -~]+$")
 
 object HostsParser {

@@ -10,7 +10,7 @@
 
     <application
         android:name=".BlockAdsApplication"
-        android:label="BlockAds"
+        android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@android:style/Theme.Material.NoActionBar"

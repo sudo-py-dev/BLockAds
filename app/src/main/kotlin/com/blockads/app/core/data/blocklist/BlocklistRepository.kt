@@ -20,7 +20,7 @@ private const val CACHE_TTL_MS = 24 * 60 * 60 * 1000L // 24 hours
 class BlocklistRepository
     @Inject
     constructor(
-        @ApplicationContext private val context: Context,
+        @param:ApplicationContext private val context: Context,
         private val okHttpClient: OkHttpClient,
     ) {
         @Volatile private var blockedDomains: HashSet<String> = HashSet()
@@ -32,7 +32,7 @@ class BlocklistRepository
         fun isDomainBlocked(domain: String): Boolean {
             val lower = domain.lowercase()
             if (blockedDomains.contains(lower)) return true
-            
+
             var dot = lower.indexOf('.')
             while (dot != -1 && dot < lower.length - 1) {
                 val parent = lower.substring(dot + 1)
@@ -57,7 +57,7 @@ class BlocklistRepository
                     Result.success(Unit)
                 }.getOrElse { e ->
                     Log.e(TAG, "Refresh failed, trying cache", e)
-                    runCatching { 
+                    runCatching {
                         loadFromCache()
                         isLoaded = true
                         Result.success(Unit)
@@ -79,10 +79,10 @@ class BlocklistRepository
             okHttpClient.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
                 val body = response.body ?: throw IOException("Empty response body")
-                
+
                 val tempFile = File(context.filesDir, "${CACHE_FILE_NAME}.tmp")
                 val set = HashSet<String>(150_000)
-                
+
                 runCatching {
                     tempFile.bufferedWriter().use { writer ->
                         body.source().inputStream().bufferedReader().use { reader ->
