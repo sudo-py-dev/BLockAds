@@ -32,7 +32,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import android.content.Intent
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.rounded.VpnKey
+import androidx.compose.material3.ListItem
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.blockads.app.core.data.blocklist.BlocklistSource
@@ -286,6 +291,31 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                     subtitle = strings.notificationStatsSubtitle,
                     checked = settings.showNotificationStats,
                     onCheckedChange = viewModel::setNotificationStats,
+                )
+            }
+
+            item {
+                val context = LocalContext.current
+                ListItem(
+                    headlineContent = { Text(strings.alwaysOnVpnLabel) },
+                    supportingContent = { Text(strings.alwaysOnVpnSubtitle) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = Icons.Rounded.VpnKey,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        val intent = Intent("android.net.vpn.SETTINGS").apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                        try {
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            // Ignored
+                        }
+                    }
                 )
             }
 

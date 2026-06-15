@@ -7,8 +7,6 @@ object Strings {
         mapOf(
             "en" to StringsEn,
             "he" to StringsHe,
-            // legacy Hebrew tag used on older Android
-            "iw" to StringsHe,
             "ar" to StringsAr,
             "fr" to StringsFr,
             "de" to StringsDe,

@@ -46,6 +46,8 @@ interface LocalizedStrings {
     val behaviourSection: String
     val autoStartLabel: String
     val autoStartSubtitle: String
+    val alwaysOnVpnLabel: String
+    val alwaysOnVpnSubtitle: String
     val notificationStatsLabel: String
     val notificationStatsSubtitle: String
     val refreshBlocklistButton: String

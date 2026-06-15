@@ -42,6 +42,8 @@ object StringsDe : LocalizedStrings {
     override val behaviourSection = "Verhalten"
     override val autoStartLabel = "Beim Start aktivieren"
     override val autoStartSubtitle = "Schutz beim Gerätestart automatisch aktivieren"
+    override val alwaysOnVpnLabel = "Strenge VPN-Sicherheit"
+    override val alwaysOnVpnSubtitle = "Systemeinstellungen öffnen, um 'Immer aktiv' zu erzwingen und Nicht-VPN-Verkehr zu blockieren"
     override val notificationStatsLabel = "Statistiken in Benachrichtigung anzeigen"
     override val notificationStatsSubtitle = "Blockierungszähler in der Statusleiste anzeigen"
     override val refreshBlocklistButton = "Sperrliste aktualisieren"
