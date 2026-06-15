@@ -94,14 +94,14 @@ fun AppBottomBar(navController: NavHostController) {
         NavigationBarItem(
             selected = currentDest?.hasRoute<Logs>() == true,
             onClick = { navController.navigate(Logs) { launchSingleTop = true } },
-            icon = { Icon(Icons.AutoMirrored.Rounded.List, contentDescription = "Logs") },
-            label = { Text("Logs") },
+            icon = { Icon(Icons.AutoMirrored.Rounded.List, contentDescription = strings.navLogs) },
+            label = { Text(strings.navLogs) },
         )
         NavigationBarItem(
             selected = currentDest?.hasRoute<Apps>() == true,
             onClick = { navController.navigate(Apps) { launchSingleTop = true } },
-            icon = { Icon(Icons.AutoMirrored.Rounded.List, contentDescription = "Apps") },
-            label = { Text("Apps") },
+            icon = { Icon(Icons.AutoMirrored.Rounded.List, contentDescription = strings.navBypass) },
+            label = { Text(strings.navBypass) },
         )
         NavigationBarItem(
             selected = currentDest?.hasRoute<Settings>() == true,

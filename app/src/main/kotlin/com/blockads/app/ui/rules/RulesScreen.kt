@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.blockads.app.core.data.rules.CustomRule
+import com.blockads.app.i18n.LocalStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,11 +53,12 @@ fun RulesScreen(
 ) {
     val rules by viewModel.rules.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
+    val strings = LocalStrings.current
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Custom Rules", fontWeight = FontWeight.Bold) },
+                title = { Text(strings.customRulesTitle, fontWeight = FontWeight.Bold) },
                 colors =
                     TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.background,
@@ -70,13 +72,13 @@ fun RulesScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { showAddDialog = true }) {
-                Icon(Icons.Rounded.Add, contentDescription = "Add Rule")
+                Icon(Icons.Rounded.Add, contentDescription = strings.addRule)
             }
         },
     ) { padding ->
         if (rules.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                Text("No custom rules defined.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(strings.noRules, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         } else {
             LazyColumn(
@@ -90,6 +92,7 @@ fun RulesScreen(
                     RuleItem(
                         rule = rule,
                         onDelete = { viewModel.removeRule(rule) },
+                        strings = strings,
                     )
                 }
             }
@@ -102,6 +105,7 @@ fun RulesScreen(
                     viewModel.addRule(domain, isWhitelist)
                     showAddDialog = false
                 },
+                strings = strings,
             )
         }
     }
@@ -111,6 +115,7 @@ fun RulesScreen(
 fun RuleItem(
     rule: CustomRule,
     onDelete: () -> Unit,
+    strings: com.blockads.app.i18n.LocalizedStrings,
 ) {
     Card(
         modifier =
@@ -138,7 +143,7 @@ fun RuleItem(
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = if (rule.isWhitelist) "Whitelist" else "Blacklist",
+                    text = if (rule.isWhitelist) strings.whitelist else strings.blacklist,
                     style = MaterialTheme.typography.bodySmall,
                     color = if (rule.isWhitelist) Color(0xFF43A047) else Color(0xFFE53935),
                 )
@@ -154,19 +159,20 @@ fun RuleItem(
 fun AddRuleDialog(
     onDismiss: () -> Unit,
     onAdd: (domain: String, isWhitelist: Boolean) -> Unit,
+    strings: com.blockads.app.i18n.LocalizedStrings,
 ) {
     var domain by remember { mutableStateOf("") }
     var isWhitelist by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Rule") },
+        title = { Text(strings.addRule) },
         text = {
             Column {
                 OutlinedTextField(
                     value = domain,
                     onValueChange = { domain = it },
-                    label = { Text("Domain (e.g., example.com)") },
+                    label = { Text(strings.domainHint) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -176,13 +182,13 @@ fun AddRuleDialog(
                         selected = !isWhitelist,
                         onClick = { isWhitelist = false },
                     )
-                    Text("Blacklist")
+                    Text(strings.blacklist)
                     Spacer(modifier = Modifier.width(16.dp))
                     RadioButton(
                         selected = isWhitelist,
                         onClick = { isWhitelist = true },
                     )
-                    Text("Whitelist")
+                    Text(strings.whitelist)
                 }
             }
         },
@@ -191,12 +197,12 @@ fun AddRuleDialog(
                 onClick = { onAdd(domain, isWhitelist) },
                 enabled = domain.isNotBlank(),
             ) {
-                Text("Add")
+                Text(strings.add)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(strings.cancel)
             }
         },
     )

@@ -5,6 +5,35 @@ interface LocalizedStrings {
     val navHome: String
     val navSettings: String
     val navAbout: String
+    val navBypass: String
+    val navLogs: String
+    val navRules: String
+
+    // Apps Screen
+    val bypassTitle: String
+    val bypassSubtitle: String
+    val systemApp: String
+    val searchApps: String
+    val showSystemApps: String
+    val noAppsFound: String
+
+    // Logs Screen
+    val logsTitle: String
+    val clearLogs: String
+    val noLogs: String
+    val blocked: String
+    val allowed: String
+
+    // Rules Screen
+    val customRulesTitle: String
+    val customRulesSubtitle: String
+    val whitelist: String
+    val blacklist: String
+    val addRule: String
+    val noRules: String
+    val domainHint: String
+    val add: String
+    val cancel: String
 
     // Home screen
     val appName: String

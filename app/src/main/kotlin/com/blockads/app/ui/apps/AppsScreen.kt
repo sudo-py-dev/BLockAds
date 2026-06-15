@@ -32,17 +32,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.blockads.app.i18n.LocalStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppsScreen(viewModel: AppsViewModel = hiltViewModel()) {
     val appsUiState by viewModel.appsUiState.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val strings = LocalStrings.current
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Bypass Apps", fontWeight = FontWeight.Bold) },
+                title = { Text(strings.bypassTitle, fontWeight = FontWeight.Bold) },
                 colors =
                     TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.background,
@@ -64,7 +66,7 @@ fun AppsScreen(viewModel: AppsViewModel = hiltViewModel()) {
             ) {
                 item {
                     Text(
-                        text = "Select apps to bypass the ad blocker.",
+                        text = strings.bypassSubtitle,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = 16.dp),
@@ -78,6 +80,7 @@ fun AppsScreen(viewModel: AppsViewModel = hiltViewModel()) {
                         onToggle = { bypass ->
                             viewModel.toggleAppBypass(app.packageName, bypass)
                         },
+                        strings = strings,
                     )
                 }
             }
@@ -90,6 +93,7 @@ fun AppListItem(
     app: AppItem,
     isBypassed: Boolean,
     onToggle: (Boolean) -> Unit,
+    strings: com.blockads.app.i18n.LocalizedStrings,
 ) {
     Card(
         modifier =
@@ -131,7 +135,7 @@ fun AppListItem(
                 )
                 if (app.isSystemApp) {
                     Text(
-                        text = "System App",
+                        text = strings.systemApp,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary,
                     )

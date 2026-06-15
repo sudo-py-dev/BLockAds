@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.blockads.app.core.data.dns.DnsLogEntry
+import com.blockads.app.i18n.LocalStrings
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -43,18 +44,19 @@ import java.util.Locale
 @Composable
 fun LogsScreen(viewModel: LogsViewModel = hiltViewModel()) {
     val logs by viewModel.logs.collectAsState()
+    val strings = LocalStrings.current
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Query Log", fontWeight = FontWeight.Bold) },
+                title = { Text(strings.logsTitle, fontWeight = FontWeight.Bold) },
                 colors =
                     TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.background,
                     ),
                 actions = {
                     IconButton(onClick = { viewModel.clearLogs() }) {
-                        Icon(Icons.Rounded.Delete, contentDescription = "Clear Logs")
+                        Icon(Icons.Rounded.Delete, contentDescription = strings.clearLogs)
                     }
                 },
             )
@@ -62,7 +64,7 @@ fun LogsScreen(viewModel: LogsViewModel = hiltViewModel()) {
     ) { padding ->
         if (logs.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                Text("No queries logged yet.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(strings.noLogs, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         } else {
             LazyColumn(
@@ -73,7 +75,7 @@ fun LogsScreen(viewModel: LogsViewModel = hiltViewModel()) {
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
             ) {
                 items(logs, key = { it.timestampMs.toString() + it.domain }) { entry ->
-                    LogItem(entry)
+                    LogItem(entry, strings)
                 }
             }
         }
@@ -81,7 +83,10 @@ fun LogsScreen(viewModel: LogsViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun LogItem(entry: DnsLogEntry) {
+fun LogItem(
+    entry: DnsLogEntry,
+    strings: com.blockads.app.i18n.LocalizedStrings,
+) {
     val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
     val timeString = dateFormat.format(Date(entry.timestampMs))
 
@@ -120,7 +125,7 @@ fun LogItem(entry: DnsLogEntry) {
             Spacer(modifier = Modifier.width(8.dp))
 
             val chipColor = if (entry.isBlocked) Color(0xFFE53935) else Color(0xFF43A047)
-            val chipText = if (entry.isBlocked) "Blocked" else "Allowed"
+            val chipText = if (entry.isBlocked) strings.blocked else strings.allowed
 
             Box(
                 modifier =

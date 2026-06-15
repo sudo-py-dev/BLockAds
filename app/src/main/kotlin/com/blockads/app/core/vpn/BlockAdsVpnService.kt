@@ -407,8 +407,12 @@ class BlockAdsVpnService : VpnService() {
             // Swap source and dest IP
             System.arraycopy(originalPacket, 12, packet, 16, 4)
             System.arraycopy(originalPacket, 16, packet, 12, 4)
-            packet[10] = 0 // Clear checksum for simplicity
+
+            packet[10] = 0 // Clear checksum before calculation
             packet[11] = 0
+            val ipChecksum = calculateIpv4Checksum(packet)
+            packet[10] = (ipChecksum shr 8).toByte()
+            packet[11] = (ipChecksum and 0xFF).toByte()
         } else {
             System.arraycopy(originalPacket, 0, packet, 0, 40)
             packet[4] = (udpLen shr 8).toByte()
@@ -438,6 +442,17 @@ class BlockAdsVpnService : VpnService() {
         packet[responseIhl + 7] = (checksum and 0xFF).toByte()
 
         return packet
+    }
+
+    private fun calculateIpv4Checksum(packet: ByteArray): Int {
+        var sum = 0L
+        for (i in 0 until 20 step 2) {
+            sum += ((packet[i].toInt() and 0xFF) shl 8) or (packet[i + 1].toInt() and 0xFF)
+        }
+        while ((sum shr 16) != 0L) {
+            sum = (sum and 0xFFFFL) + (sum shr 16)
+        }
+        return (sum.inv() and 0xFFFFL).toInt()
     }
 
     private fun calculateUdpChecksum(

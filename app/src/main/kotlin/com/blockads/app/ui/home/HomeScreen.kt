@@ -298,12 +298,15 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 exit = shrinkVertically() + fadeOut(),
             ) {
                 var showPauseMenu by remember { mutableStateOf(false) }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Box {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth(0.9f), contentAlignment = Alignment.Center) {
                         OutlinedButton(
                             onClick = { showPauseMenu = true },
                             shape = MaterialTheme.shapes.large,
-                            modifier = Modifier.fillMaxWidth(0.9f),
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Icon(Icons.Rounded.Pause, contentDescription = null)
                             Spacer(Modifier.width(8.dp))
@@ -342,7 +345,10 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 enter = expandVertically() + fadeIn(),
                 exit = shrinkVertically() + fadeOut(),
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     Button(
                         onClick = { viewModel.resumeVpn(context) },
                         shape = MaterialTheme.shapes.large,

@@ -1,9 +1,35 @@
 package com.blockads.app.i18n
 
 object StringsDe : LocalizedStrings {
-    override val navHome = "Startseite"
+    override val navHome = "Start"
     override val navSettings = "Einstellungen"
     override val navAbout = "Über"
+    override val navBypass = "Apps umgehen"
+    override val navLogs = "Protokolle"
+    override val navRules = "Regeln"
+
+    override val bypassTitle = "Apps umgehen"
+    override val bypassSubtitle = "Wählen Sie Apps aus, um den Werbeblocker zu umgehen."
+    override val systemApp = "System-App"
+    override val searchApps = "Apps suchen..."
+    override val showSystemApps = "System-Apps anzeigen"
+    override val noAppsFound = "Keine Apps gefunden"
+
+    override val logsTitle = "Abfrageprotokoll"
+    override val clearLogs = "Protokolle löschen"
+    override val noLogs = "Noch keine Abfragen protokolliert"
+    override val blocked = "Blockiert"
+    override val allowed = "Erlaubt"
+
+    override val customRulesTitle = "Benutzerdefinierte Regeln"
+    override val customRulesSubtitle = "Whitelist- und Blacklist-Domains verwalten"
+    override val whitelist = "Whitelist"
+    override val blacklist = "Blacklist"
+    override val addRule = "Regel hinzufügen"
+    override val noRules = "Keine Regeln definiert"
+    override val domainHint = "Domain (z. B. example.com)"
+    override val add = "Hinzufügen"
+    override val cancel = "Abbrechen"
 
     override val appName = "BlockAds"
     override val tileLabel = "BlockAds VPN"
