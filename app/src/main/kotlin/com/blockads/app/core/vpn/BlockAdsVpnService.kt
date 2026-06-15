@@ -242,43 +242,52 @@ class BlockAdsVpnService : VpnService() {
                 val destPort = ((buffer[ihl + 2].toInt() and 0xFF) shl 8) or (buffer[ihl + 3].toInt() and 0xFF)
                 if (destPort != 53) continue
 
-                val udpPayloadLen = ((buffer[ihl + 4].toInt() and 0xFF) shl 8) or (buffer[ihl + 5].toInt() and 0xFF) - 8
+                val udpPayloadLen = (((buffer[ihl + 4].toInt() and 0xFF) shl 8) or (buffer[ihl + 5].toInt() and 0xFF)) - 8
                 if (udpPayloadLen <= 0 || ihl + 8 + udpPayloadLen > len) continue
 
                 val dnsQuery = buffer.copyOfRange(ihl + 8, ihl + 8 + udpPayloadLen)
+                val packetCopy = buffer.copyOf(len)
 
-                when (val result = DnsPacketParser.parseQuery(dnsQuery)) {
-                    is ParseResult.Success -> {
-                        val isPaused = _vpnState.value == VpnState.PAUSED && System.currentTimeMillis() < pauseUntilMs
-                        val domain = result.domain
+                scope.launch {
+                    when (val result = DnsPacketParser.parseQuery(dnsQuery)) {
+                        is ParseResult.Success -> {
+                            val isPaused = _vpnState.value == VpnState.PAUSED && System.currentTimeMillis() < pauseUntilMs
+                            val domain = result.domain
 
-                        val isWhitelisted = currentSettings.whitelistDomains.contains(domain)
-                        val isBlacklisted = currentSettings.blacklistDomains.contains(domain)
+                            val isWhitelisted = currentSettings.whitelistDomains.contains(domain)
+                            val isBlacklisted = currentSettings.blacklistDomains.contains(domain)
 
-                        val shouldBlock = !isPaused && !isWhitelisted && (isBlacklisted || blocklistRepository.isDomainBlocked(domain))
+                            val shouldBlock = !isPaused && !isWhitelisted && (isBlacklisted || blocklistRepository.isDomainBlocked(domain))
 
-                        val dnsResponse =
-                            if (shouldBlock) {
-                                _stats.update { it.copy(blockedCount = it.blockedCount + 1) }
-                                dnsLogRepository.logQuery(domain, true)
-                                DnsResponseBuilder.nxdomain(result.txId, dnsQuery)
-                            } else {
-                                _stats.update { it.copy(forwardedCount = it.forwardedCount + 1) }
-                                dnsLogRepository.logQuery(domain, false)
+                            val dnsResponse =
+                                if (shouldBlock) {
+                                    _stats.update { it.copy(blockedCount = it.blockedCount + 1) }
+                                    dnsLogRepository.logQuery(domain, true)
+                                    DnsResponseBuilder.nxdomain(result.txId, dnsQuery)
+                                } else {
+                                    _stats.update { it.copy(forwardedCount = it.forwardedCount + 1) }
+                                    dnsLogRepository.logQuery(domain, false)
 
-                                val primary = currentSettings.blocklistSource.upstreamDns?.first ?: currentSettings.dnsPrimary
-                                val secondary = currentSettings.blocklistSource.upstreamDns?.second ?: currentSettings.dnsSecondary
-                                dnsResolver.forward(dnsQuery, primary, secondary)
-                            }
+                                    val primary = currentSettings.blocklistSource.upstreamDns?.first ?: currentSettings.dnsPrimary
+                                    val secondary = currentSettings.blocklistSource.upstreamDns?.second ?: currentSettings.dnsSecondary
+                                    dnsResolver.forward(dnsQuery, primary, secondary)
+                                }
 
-                        if (dnsResponse != null) {
-                            val ipResponse = wrapInIpUdp(buffer, len, ihl, dnsResponse, isIpv4)
-                            if (ipResponse != null) {
-                                output.write(ipResponse)
+                            if (dnsResponse != null) {
+                                val ipResponse = wrapInIpUdp(packetCopy, len, ihl, dnsResponse, isIpv4)
+                                if (ipResponse != null) {
+                                    try {
+                                        synchronized(output) {
+                                            output.write(ipResponse)
+                                        }
+                                    } catch (e: Exception) {
+                                        Log.e(TAG, "Failed to write DNS response", e)
+                                    }
+                                }
                             }
                         }
+                        else -> {}
                     }
-                    else -> {}
                 }
             } catch (e: Exception) {
                 if (!scope.isActive) break
