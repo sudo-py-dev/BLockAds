@@ -15,6 +15,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
@@ -99,281 +101,295 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             )
         },
     ) { padding ->
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(horizontal = Spacing.lg),
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(horizontal = Spacing.lg, vertical = Spacing.lg),
         ) {
-            Spacer(Modifier.height(Spacing.lg))
-
-            // Status chip
-            AnimatedContent(
-                targetState = vpnState,
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
-                label = "statusChip",
-            ) { state ->
-                val (label, color) =
-                    when (state) {
-                        VpnState.ACTIVE -> strings.vpnActive to MaterialTheme.colorScheme.primary
-                        VpnState.CONNECTING -> strings.vpnConnecting to MaterialTheme.colorScheme.secondary
-                        VpnState.ERROR -> strings.vpnError to MaterialTheme.colorScheme.error
-                        VpnState.STOPPED -> strings.vpnStopped to MaterialTheme.colorScheme.onSurfaceVariant
-                        VpnState.PAUSED -> strings.pauseVpn to MaterialTheme.colorScheme.tertiary
-                    }
-                AssistChip(
-                    onClick = {},
-                    enabled = false,
-                    label = { Text(label, style = MaterialTheme.typography.labelLarge) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Rounded.Shield,
-                            contentDescription = null,
-                            modifier = Modifier.size(AssistChipDefaults.IconSize),
-                        )
-                    },
-                    colors =
-                        AssistChipDefaults.assistChipColors(
-                            disabledContainerColor = color.copy(alpha = 0.08f),
-                            disabledLabelColor = color,
-                            disabledLeadingIconContentColor = color,
-                        ),
-                    border =
-                        AssistChipDefaults.assistChipBorder(
-                            enabled = false,
-                            disabledBorderColor = color.copy(alpha = 0.2f),
-                        ),
-                    shape = MaterialTheme.shapes.medium,
-                )
-            }
-
-            Spacer(Modifier.height(Spacing.xl))
-
-            AnimatedVisibility(
-                visible = isPrivateDnsStrict && vpnState == VpnState.ACTIVE,
-                enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut(),
-            ) {
-                ElevatedCard(
-                    colors =
-                        CardDefaults.elevatedCardColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer,
-                            contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                        ),
-                    modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.md),
-                ) {
-                    Column(modifier = Modifier.padding(Spacing.lg)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Rounded.Warning, contentDescription = null)
-                            Spacer(Modifier.width(Spacing.sm))
-                            Text(strings.privateDnsWarningTitle, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            item {
+                // Status chip
+                AnimatedContent(
+                    targetState = vpnState,
+                    transitionSpec = { fadeIn() togetherWith fadeOut() },
+                    label = "statusChip",
+                ) { state ->
+                    val (label, color) =
+                        when (state) {
+                            VpnState.ACTIVE -> strings.vpnActive to MaterialTheme.colorScheme.primary
+                            VpnState.CONNECTING -> strings.vpnConnecting to MaterialTheme.colorScheme.secondary
+                            VpnState.ERROR -> strings.vpnError to MaterialTheme.colorScheme.error
+                            VpnState.STOPPED -> strings.vpnStopped to MaterialTheme.colorScheme.onSurfaceVariant
+                            VpnState.PAUSED -> strings.pauseVpn to MaterialTheme.colorScheme.tertiary
                         }
-                        Spacer(Modifier.height(Spacing.sm))
-                        Text(strings.privateDnsWarningMessage, style = MaterialTheme.typography.bodyMedium)
-                        Spacer(Modifier.height(Spacing.md))
-                        Button(
-                            onClick = {
-                                context.startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
-                            },
-                            colors =
-                                ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.onErrorContainer,
-                                    contentColor = MaterialTheme.colorScheme.errorContainer,
-                                ),
-                            modifier = Modifier.align(Alignment.End),
-                        ) {
-                            Text(strings.privateDnsActionSettings)
-                        }
-                    }
-                }
-            }
-
-            val isBatteryOptimized by viewModel.isBatteryOptimized.collectAsState()
-            AnimatedVisibility(
-                visible = isBatteryOptimized && vpnState == VpnState.ACTIVE,
-                enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut(),
-            ) {
-                ElevatedCard(
-                    colors =
-                        CardDefaults.elevatedCardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                        ),
-                    modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.xl),
-                ) {
-                    Column(modifier = Modifier.padding(Spacing.lg)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Rounded.Warning, contentDescription = null)
-                            Spacer(Modifier.width(Spacing.sm))
-                            Text(
-                                strings.batteryOptimizationWarningTitle,
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
+                    AssistChip(
+                        onClick = {},
+                        enabled = false,
+                        label = { Text(label, style = MaterialTheme.typography.labelLarge) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Rounded.Shield,
+                                contentDescription = null,
+                                modifier = Modifier.size(AssistChipDefaults.IconSize),
                             )
-                        }
-                        Spacer(Modifier.height(Spacing.sm))
-                        Text(strings.batteryOptimizationWarningMessage, style = MaterialTheme.typography.bodyMedium)
-                        Spacer(Modifier.height(Spacing.md))
-                        Button(
-                            onClick = {
-                                val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
-                                context.startActivity(intent)
-                            },
-                            colors =
-                                ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                                    contentColor = MaterialTheme.colorScheme.tertiaryContainer,
-                                ),
-                            modifier = Modifier.align(Alignment.End),
-                        ) {
-                            Text(strings.batteryOptimizationActionSettings)
-                        }
-                    }
+                        },
+                        colors =
+                            AssistChipDefaults.assistChipColors(
+                                disabledContainerColor = color.copy(alpha = 0.08f),
+                                disabledLabelColor = color,
+                                disabledLeadingIconContentColor = color,
+                            ),
+                        border =
+                            AssistChipDefaults.assistChipBorder(
+                                enabled = false,
+                                disabledBorderColor = color.copy(alpha = 0.2f),
+                            ),
+                        shape = MaterialTheme.shapes.medium,
+                    )
                 }
+                Spacer(Modifier.height(Spacing.xl))
             }
 
-            // Power toggle
-            PowerToggle(
-                vpnState = vpnState,
-                onToggle = {
-                    when (vpnState) {
-                        VpnState.ACTIVE, VpnState.CONNECTING, VpnState.PAUSED -> viewModel.stopVpn(context)
-                        VpnState.STOPPED, VpnState.ERROR -> {
-                            val prepareIntent = VpnService.prepare(context)
-                            if (prepareIntent != null) {
-                                vpnPermissionLauncher.launch(prepareIntent)
-                            } else {
-                                viewModel.startVpn(context)
+            item {
+                AnimatedVisibility(
+                    visible = isPrivateDnsStrict && vpnState == VpnState.ACTIVE,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut(),
+                ) {
+                    ElevatedCard(
+                        colors =
+                            CardDefaults.elevatedCardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer,
+                                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                            ),
+                        modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.md),
+                    ) {
+                        Column(modifier = Modifier.padding(Spacing.lg)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Rounded.Warning, contentDescription = null)
+                                Spacer(Modifier.width(Spacing.sm))
+                                Text(
+                                    strings.privateDnsWarningTitle,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
+                            Spacer(Modifier.height(Spacing.sm))
+                            Text(strings.privateDnsWarningMessage, style = MaterialTheme.typography.bodyMedium)
+                            Spacer(Modifier.height(Spacing.md))
+                            Button(
+                                onClick = {
+                                    context.startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
+                                },
+                                colors =
+                                    ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.onErrorContainer,
+                                        contentColor = MaterialTheme.colorScheme.errorContainer,
+                                    ),
+                                modifier = Modifier.align(Alignment.End),
+                            ) {
+                                Text(strings.privateDnsActionSettings)
                             }
                         }
                     }
-                },
-                contentDesc =
-                    when (vpnState) {
-                        VpnState.ACTIVE, VpnState.PAUSED -> strings.tapToStop
-                        else -> strings.tapToStart
-                    },
-            )
-
-            Spacer(Modifier.height(Spacing.lg))
-
-            Text(
-                text =
-                    when (vpnState) {
-                        VpnState.ACTIVE, VpnState.PAUSED -> strings.tapToStop
-                        VpnState.CONNECTING -> strings.vpnConnecting
-                        VpnState.ERROR -> strings.vpnError
-                        VpnState.STOPPED -> strings.tapToStart
-                    },
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.Medium,
-            )
-
-            Spacer(Modifier.weight(1f))
-
-            // Stats card — only when active or paused
-            AnimatedVisibility(
-                visible = vpnState == VpnState.ACTIVE || vpnState == VpnState.PAUSED || stats.blockedCount > 0,
-                enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut(),
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    StatsCard(
-                        stats = stats,
-                        strings = strings,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    Spacer(Modifier.height(Spacing.lg))
                 }
             }
 
-            // Pause / Resume UI
-            AnimatedVisibility(
-                visible = vpnState == VpnState.ACTIVE,
-                enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut(),
-            ) {
-                var showPauseMenu by remember { mutableStateOf(false) }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+            item {
+                val isBatteryOptimized by viewModel.isBatteryOptimized.collectAsState()
+                AnimatedVisibility(
+                    visible = isBatteryOptimized && vpnState == VpnState.ACTIVE,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut(),
                 ) {
-                    Box(modifier = Modifier.fillMaxWidth(0.9f), contentAlignment = Alignment.Center) {
-                        OutlinedButton(
-                            onClick = { showPauseMenu = true },
-                            shape = MaterialTheme.shapes.large,
+                    ElevatedCard(
+                        colors =
+                            CardDefaults.elevatedCardColors(
+                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                            ),
+                        modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.xl),
+                    ) {
+                        Column(modifier = Modifier.padding(Spacing.lg)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Rounded.Warning, contentDescription = null)
+                                Spacer(Modifier.width(Spacing.sm))
+                                Text(
+                                    strings.batteryOptimizationWarningTitle,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
+                            Spacer(Modifier.height(Spacing.sm))
+                            Text(strings.batteryOptimizationWarningMessage, style = MaterialTheme.typography.bodyMedium)
+                            Spacer(Modifier.height(Spacing.md))
+                            Button(
+                                onClick = {
+                                    val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                                    context.startActivity(intent)
+                                },
+                                colors =
+                                    ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.tertiaryContainer,
+                                    ),
+                                modifier = Modifier.align(Alignment.End),
+                            ) {
+                                Text(strings.batteryOptimizationActionSettings)
+                            }
+                        }
+                    }
+                }
+            }
+
+            item {
+                // Power toggle
+                PowerToggle(
+                    vpnState = vpnState,
+                    onToggle = {
+                        when (vpnState) {
+                            VpnState.ACTIVE, VpnState.CONNECTING, VpnState.PAUSED -> viewModel.stopVpn(context)
+                            VpnState.STOPPED, VpnState.ERROR -> {
+                                val prepareIntent = VpnService.prepare(context)
+                                if (prepareIntent != null) {
+                                    vpnPermissionLauncher.launch(prepareIntent)
+                                } else {
+                                    viewModel.startVpn(context)
+                                }
+                            }
+                        }
+                    },
+                    contentDesc =
+                        when (vpnState) {
+                            VpnState.ACTIVE, VpnState.PAUSED -> strings.tapToStop
+                            else -> strings.tapToStart
+                        },
+                )
+
+                Spacer(Modifier.height(Spacing.lg))
+
+                Text(
+                    text =
+                        when (vpnState) {
+                            VpnState.ACTIVE, VpnState.PAUSED -> strings.tapToStop
+                            VpnState.CONNECTING -> strings.vpnConnecting
+                            VpnState.ERROR -> strings.vpnError
+                            VpnState.STOPPED -> strings.tapToStart
+                        },
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium,
+                )
+
+                Spacer(Modifier.height(Spacing.xl))
+            }
+
+            item {
+                // Stats card — only when active or paused
+                AnimatedVisibility(
+                    visible = vpnState == VpnState.ACTIVE || vpnState == VpnState.PAUSED || stats.blockedCount > 0,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut(),
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        StatsCard(
+                            stats = stats,
+                            strings = strings,
                             modifier = Modifier.fillMaxWidth(),
+                        )
+                        Spacer(Modifier.height(Spacing.xl))
+                    }
+                }
+            }
+
+            item {
+                // Pause / Resume UI
+                AnimatedVisibility(
+                    visible = vpnState == VpnState.ACTIVE,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut(),
+                ) {
+                    var showPauseMenu by remember { mutableStateOf(false) }
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Box(modifier = Modifier.fillMaxWidth(0.9f), contentAlignment = Alignment.Center) {
+                            OutlinedButton(
+                                onClick = { showPauseMenu = true },
+                                shape = MaterialTheme.shapes.large,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Icon(Icons.Rounded.Pause, contentDescription = null)
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = strings.pauseVpn,
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.labelLarge,
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = showPauseMenu,
+                                onDismissRequest = { showPauseMenu = false },
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text(strings.pauseFor15m) },
+                                    onClick = {
+                                        showPauseMenu = false
+                                        viewModel.pauseVpn(context, 15 * 60 * 1000L)
+                                    },
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(strings.pauseFor1h) },
+                                    onClick = {
+                                        showPauseMenu = false
+                                        viewModel.pauseVpn(context, 60 * 60 * 1000L)
+                                    },
+                                )
+                            }
+                        }
+                        Spacer(Modifier.height(Spacing.xl))
+                    }
+                }
+            }
+
+            item {
+                AnimatedVisibility(
+                    visible = vpnState == VpnState.PAUSED,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut(),
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Button(
+                            onClick = { viewModel.resumeVpn(context) },
+                            shape = MaterialTheme.shapes.large,
+                            modifier = Modifier.fillMaxWidth(0.9f),
                         ) {
-                            Icon(Icons.Rounded.Pause, contentDescription = null)
+                            Icon(Icons.Rounded.PlayArrow, contentDescription = null)
                             Spacer(Modifier.width(8.dp))
                             Text(
-                                text = strings.pauseVpn,
+                                text = strings.resumeVpn,
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.labelLarge,
                             )
                         }
-                        DropdownMenu(
-                            expanded = showPauseMenu,
-                            onDismissRequest = { showPauseMenu = false },
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(strings.pauseFor15m) },
-                                onClick = {
-                                    showPauseMenu = false
-                                    viewModel.pauseVpn(context, 15 * 60 * 1000L)
-                                },
-                            )
-                            DropdownMenuItem(
-                                text = { Text(strings.pauseFor1h) },
-                                onClick = {
-                                    showPauseMenu = false
-                                    viewModel.pauseVpn(context, 60 * 60 * 1000L)
-                                },
-                            )
-                        }
+                        Spacer(Modifier.height(Spacing.xl))
                     }
-                    Spacer(Modifier.height(Spacing.lg))
                 }
             }
 
-            AnimatedVisibility(
-                visible = vpnState == VpnState.PAUSED,
-                enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut(),
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Button(
-                        onClick = { viewModel.resumeVpn(context) },
-                        shape = MaterialTheme.shapes.large,
-                        modifier = Modifier.fillMaxWidth(0.9f),
-                    ) {
-                        Icon(Icons.Rounded.PlayArrow, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = strings.resumeVpn,
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.labelLarge,
-                        )
-                    }
-                    Spacer(Modifier.height(Spacing.lg))
+            item {
+                // Current blocklist info
+                settings?.let { s ->
+                    Text(
+                        text = "${strings.currentBlocklist}: ${s.blocklistSource.key}",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        modifier = Modifier.padding(bottom = Spacing.lg),
+                    )
                 }
-            }
-
-            // Current blocklist info
-            settings?.let { s ->
-                Text(
-                    text = "${strings.currentBlocklist}: ${s.blocklistSource.key}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                    modifier = Modifier.padding(bottom = Spacing.lg),
-                )
             }
         }
     }
