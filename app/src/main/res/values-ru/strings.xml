@@ -64,7 +64,7 @@
     <string name="setting_auto_connect">Автоподключение при запуске</string>
     <string name="setting_auto_connect_desc">Автоматически запускать VPN при включении устройства</string>
     <string name="always_on_vpn_title">Совет: Постоянный VPN</string>
-    <string name="always_on_vpn_desc">Для максимальной безопасности и фильтрации всех приложений, включите «Постоянный VPN» и «Блокировать соединения без VPN» в настройках системы.</string>
+    <string name="always_on_vpn_desc">Чтобы VPN запускался автоматически, включите «Постоянный VPN» в настройках системы.\n\nВАЖНО: НЕ включайте «Блокировать соединения без VPN». Это только DNS-VPN, и включение этой настройки заблокирует вам доступ в Интернет.</string>
     <string name="btn_open_system_vpn">Открыть настройки VPN</string>
     <string name="notification_paused_title">Блокировщик рекламы DNS приостановлен</string>
     <string name="notification_paused_text">Блокировка рекламы приостановлена.</string>

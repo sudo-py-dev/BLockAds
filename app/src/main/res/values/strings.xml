@@ -16,7 +16,7 @@
     <string name="setting_auto_connect">Auto-connect on Boot</string>
     <string name="setting_auto_connect_desc">Automatically start the VPN when the device turns on</string>
     <string name="always_on_vpn_title">Tip: Always-on VPN</string>
-    <string name="always_on_vpn_desc">For maximum security and to ensure all apps are filtered, enable "Always-on VPN" and "Block connections without VPN" in your Android system settings.</string>
+    <string name="always_on_vpn_desc">To ensure the VPN starts automatically and stays active, enable "Always-on VPN" in your Android settings.\n\nIMPORTANT: Do NOT enable "Block connections without VPN", as this is a DNS-only VPN and enabling that setting will block your internet access.</string>
     <string name="btn_open_system_vpn">Open System VPN Settings</string>
     <string name="setting_language">Language</string>
     

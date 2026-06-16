@@ -64,7 +64,7 @@
     <string name="setting_auto_connect">התחברות אוטומטית בהפעלה</string>
     <string name="setting_auto_connect_desc">הפעל אוטומטית את ה-VPN בעת הדלקת המכשיר</string>
     <string name="always_on_vpn_title">טיפ: VPN תמידי</string>
-    <string name="always_on_vpn_desc">לאבטחה מרבית וכדי להבטיח שכל האפליקציות מסוננות, הפעל את \"VPN תמידי\" ו-\"חסום חיבורים ללא VPN\" בהגדרות מערכת האנדרואיד שלך.</string>
+    <string name="always_on_vpn_desc">כדי שה-VPN יופעל אוטומטית, הפעל את \"VPN תמידי\" בהגדרות המכשיר שלך.\n\nחשוב: אל תפעיל את \"חסום חיבורים ללא VPN\". זהו VPN ל-DNS בלבד, והפעלת הגדרה זו תחסום את הגישה שלך לאינטרנט.</string>
     <string name="btn_open_system_vpn">פתח הגדרות VPN במערכת</string>
     <string name="notification_paused_title">חוסם פרסומות DNS מושהה</string>
     <string name="notification_paused_text">חסימת הפרסומות מושהית.</string>
