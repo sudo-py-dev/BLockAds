@@ -61,7 +61,12 @@
     <string name="pause_duration_5m">5 Минут</string>
     <string name="pause_duration_15m">15 Минут</string>
     <string name="pause_duration_1h">1 Час</string>
-    <string name="notification_paused_title">BlockAds VPN (Пауза)</string>
+    <string name="setting_auto_connect">Автоподключение при запуске</string>
+    <string name="setting_auto_connect_desc">Автоматически запускать VPN при включении устройства</string>
+    <string name="always_on_vpn_title">Совет: Постоянный VPN</string>
+    <string name="always_on_vpn_desc">Для максимальной безопасности и фильтрации всех приложений, включите «Постоянный VPN» и «Блокировать соединения без VPN» в настройках системы.</string>
+    <string name="btn_open_system_vpn">Открыть настройки VPN</string>
+    <string name="notification_paused_title">Блокировщик рекламы DNS приостановлен</string>
     <string name="notification_paused_text">Блокировка рекламы приостановлена.</string>
     <string name="custom_dns">Свой DNS</string>
     <string name="custom">Свой</string>

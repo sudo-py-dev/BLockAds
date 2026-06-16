@@ -61,7 +61,12 @@
     <string name="pause_duration_5m">5 Minutes</string>
     <string name="pause_duration_15m">15 Minutes</string>
     <string name="pause_duration_1h">1 Heure</string>
-    <string name="notification_paused_title">BlockAds VPN (En Pause)</string>
+    <string name="setting_auto_connect">Connexion auto au démarrage</string>
+    <string name="setting_auto_connect_desc">Démarrer automatiquement le VPN lors de l\'allumage de l\'appareil</string>
+    <string name="always_on_vpn_title">Astuce : VPN permanent</string>
+    <string name="always_on_vpn_desc">Pour une sécurité maximale et filtrer toutes les applications, activez « VPN permanent » et « Bloquer les connexions sans VPN » dans les paramètres de votre appareil.</string>
+    <string name="btn_open_system_vpn">Ouvrir les paramètres VPN</string>
+    <string name="notification_paused_title">Bloqueur de pub DNS en pause</string>
     <string name="notification_paused_text">Le blocage des pubs est en pause.</string>
     <string name="custom_dns">DNS Personnalisé</string>
     <string name="custom">Personnalisé</string>

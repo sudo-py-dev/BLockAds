@@ -61,7 +61,12 @@
     <string name="pause_duration_5m">5 דקות</string>
     <string name="pause_duration_15m">15 דקות</string>
     <string name="pause_duration_1h">שעה 1</string>
-    <string name="notification_paused_title">BlockAds VPN (מושהה)</string>
+    <string name="setting_auto_connect">התחברות אוטומטית בהפעלה</string>
+    <string name="setting_auto_connect_desc">הפעל אוטומטית את ה-VPN בעת הדלקת המכשיר</string>
+    <string name="always_on_vpn_title">טיפ: VPN תמידי</string>
+    <string name="always_on_vpn_desc">לאבטחה מרבית וכדי להבטיח שכל האפליקציות מסוננות, הפעל את \"VPN תמידי\" ו-\"חסום חיבורים ללא VPN\" בהגדרות מערכת האנדרואיד שלך.</string>
+    <string name="btn_open_system_vpn">פתח הגדרות VPN במערכת</string>
+    <string name="notification_paused_title">חוסם פרסומות DNS מושהה</string>
     <string name="notification_paused_text">חסימת הפרסומות מושהית.</string>
     <string name="custom_dns">DNS מותאם אישית</string>
     <string name="custom">מותאם אישית</string>
