@@ -92,7 +92,7 @@ fun AboutScreen() {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = stringResource(R.string.about_version, "1.0"),
+            text = stringResource(R.string.about_version, "1.0.1"),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
         )
