@@ -69,16 +69,36 @@ class BlockAdsVpnService : VpnService() {
 
     private fun updateNotification() {
         val isPaused = dnsTunnel?.isPaused == true
+        val isFallback = dnsTunnel?.isFallbackActive == true
         VpnStateManager.updateState(if (isPaused) VpnState.PAUSED else VpnState.CONNECTED)
 
-        val title = if (isPaused) getString(R.string.notification_paused_title) else getString(R.string.notification_vpn_title)
-        val text = if (isPaused) getString(R.string.notification_paused_text) else getString(R.string.notification_vpn_text)
+        val title: String
+        val text: String
+        val icon: Int
+
+        when {
+            isPaused -> {
+                title = getString(R.string.notification_paused_title)
+                text = getString(R.string.notification_paused_text)
+                icon = android.R.drawable.ic_secure
+            }
+            isFallback -> {
+                title = getString(R.string.notification_fallback_title)
+                text = getString(R.string.notification_fallback_text)
+                icon = android.R.drawable.stat_notify_error
+            }
+            else -> {
+                title = getString(R.string.notification_vpn_title)
+                text = getString(R.string.notification_vpn_text)
+                icon = android.R.drawable.ic_secure
+            }
+        }
 
         val builder =
             NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(text)
-                .setSmallIcon(android.R.drawable.ic_secure)
+                .setSmallIcon(icon)
                 .setOngoing(true)
 
         if (isPaused) {
@@ -112,21 +132,7 @@ class BlockAdsVpnService : VpnService() {
     }
 
     private fun handleFallbackStateChange(isFallback: Boolean) {
-        val manager = getSystemService(NotificationManager::class.java)
-        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setAutoCancel(true)
-
-        if (isFallback) {
-            builder.setContentTitle(getString(R.string.notification_fallback_title))
-            builder.setContentText(getString(R.string.notification_fallback_text))
-            builder.setSmallIcon(android.R.drawable.stat_notify_error)
-        } else {
-            builder.setContentTitle(getString(R.string.notification_recovery_title))
-            builder.setContentText(getString(R.string.notification_recovery_text))
-            builder.setSmallIcon(android.R.drawable.stat_sys_warning)
-        }
-
-        manager.notify(2, builder.build())
+        updateNotification()
     }
 
     private fun pauseVpn(durationMins: Long) {
