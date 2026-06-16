@@ -75,19 +75,21 @@
     <string name="notification_recovery_title">DNS Restored</string>
     <string name="notification_recovery_text">Primary DNS is responding again.</string>
 
-    <!-- DNS Providers -->
-    <string name="dns_adguard_recommended">AdGuard (Recommended Ad Block)</string>
-    <string name="dns_adguard_2">AdGuard Alternative</string>
-    <string name="dns_adguard_family">AdGuard Family Filter</string>
-    <string name="dns_adguard_family_2">AdGuard Family Alternative</string>
-    <string name="dns_controld_adblock">Control D (Ad Block)</string>
-    <string name="dns_mullvad_adblock">Mullvad (Ad Block)</string>
-    <string name="dns_mullvad_tracker">Mullvad (Ad &amp; Tracker Block)</string>
-    <string name="dns_cloudflare_security">Cloudflare Security (Malware)</string>
-    <string name="dns_cloudflare_family">Cloudflare Family (Malware + Adult)</string>
-    <string name="dns_cleanbrowsing_family">CleanBrowsing (Family)</string>
-    <string name="dns_cleanbrowsing_adult">CleanBrowsing (Adult)</string>
-    <string name="dns_quad9_malware">Quad9 Security (Malware Block)</string>
-    <string name="dns_alternate_dns">Alternate DNS</string>
-    <string name="dns_alternate_dns_2">Alternate DNS Alternative</string>
+    <string name="desc_secured">Secured</string>
+    <string name="status_connection_paused">Connection Paused</string>
+    <string name="status_secured_doh">Secured via DNS-over-HTTPS</string>
+    <string name="status_secured_dot">Secured via DNS-over-TLS</string>
+    <string name="live_threat_monitor">LIVE TRAFFIC MONITOR</string>
+    <string name="listening_traffic">&gt; Listening for traffic...</string>
+    <string name="status_blocked">[BLOCKED]</string>
+    <string name="status_allowed">[ALLOWED]</string>
+    <string name="title_privacy_policy">Privacy Policy</string>
+    <string name="desc_privacy_redirect">You are about to be redirected to the provider\'s privacy policy in your browser. Do you want to continue?</string>
+    <string name="btn_continue">Continue</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="protocol_doh">DNS-over-HTTPS</string>
+    <string name="protocol_dot">DNS-over-TLS</string>
+    <string name="desc_open_logs">Open Logs</string>
+    <string name="desc_back">Back</string>
+
 </resources>

@@ -208,7 +208,7 @@ fun SettingsScreen(
                 }
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = "Open Logs",
+                    contentDescription = stringResource(R.string.desc_open_logs),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                 )
             }

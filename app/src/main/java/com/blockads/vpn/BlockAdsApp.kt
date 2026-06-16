@@ -2,12 +2,14 @@ package com.blockads.vpn
 
 import android.app.Application
 import android.content.Intent
+import com.blockads.vpn.data.DnsProviders
 import com.blockads.vpn.ui.CrashActivity
 import com.blockads.vpn.util.Logger
 
 class BlockAdsApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        DnsProviders.init(this)
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->

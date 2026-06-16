@@ -74,4 +74,20 @@
     <string name="notification_fallback_text">Le DNS principal ne répond pas. Utilisation du DNS de secours.</string>
     <string name="notification_recovery_title">DNS restauré</string>
     <string name="notification_recovery_text">Le DNS principal répond à nouveau.</string>
+    <string name="desc_secured">Sécurisé</string>
+    <string name="status_connection_paused">Connexion en pause</string>
+    <string name="status_secured_doh">Sécurisé via DNS-over-HTTPS</string>
+    <string name="status_secured_dot">Sécurisé via DNS-over-TLS</string>
+    <string name="live_threat_monitor">MONITEUR DE TRAFIC EN DIRECT</string>
+    <string name="listening_traffic">&gt; Écoute du trafic...</string>
+    <string name="status_blocked">[BLOQUÉ]</string>
+    <string name="status_allowed">[AUTORISÉ]</string>
+    <string name="title_privacy_policy">Politique de confidentialité</string>
+    <string name="desc_privacy_redirect">Vous êtes sur le point d\'être redirigé vers la politique de confidentialité du fournisseur dans votre navigateur. Voulez-vous continuer ?</string>
+    <string name="btn_continue">Continuer</string>
+    <string name="btn_cancel">Annuler</string>
+    <string name="protocol_doh">DNS-over-HTTPS</string>
+    <string name="protocol_dot">DNS-over-TLS</string>
+    <string name="desc_open_logs">Ouvrir les journaux</string>
+    <string name="desc_back">Retour</string>
 </resources>

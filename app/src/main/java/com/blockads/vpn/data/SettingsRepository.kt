@@ -11,18 +11,24 @@ val Context.dataStore by preferencesDataStore(name = "settings")
 
 class SettingsRepository(private val context: Context) {
     companion object {
-        val DNS_PROVIDER_KEY = stringPreferencesKey("dns_provider")
+        val DNS_PROVIDER_ID_KEY = stringPreferencesKey("dns_provider_id")
+        val DNS_PROTOCOL_KEY = stringPreferencesKey("dns_protocol") // "doh" or "dot"
         val THEME_KEY = stringPreferencesKey("theme")
         val LANGUAGE_KEY = stringPreferencesKey("language")
         val AUTO_CONNECT_KEY = androidx.datastore.preferences.core.booleanPreferencesKey("auto_connect_on_boot")
 
-        // AdGuard DNS is the default (94.140.14.14)
-        const val DEFAULT_DNS = "94.140.14.14"
+        const val DEFAULT_DNS_ID = "adguard_recommended"
+        const val DEFAULT_PROTOCOL = "doh"
     }
 
-    val dnsProvider: Flow<String> =
+    val dnsProviderId: Flow<String> =
         context.dataStore.data.map { preferences ->
-            preferences[DNS_PROVIDER_KEY] ?: DEFAULT_DNS
+            preferences[DNS_PROVIDER_ID_KEY] ?: DEFAULT_DNS_ID
+        }
+
+    val dnsProtocol: Flow<String> =
+        context.dataStore.data.map { preferences ->
+            preferences[DNS_PROTOCOL_KEY] ?: DEFAULT_PROTOCOL
         }
 
     val theme: Flow<String> =
@@ -40,9 +46,15 @@ class SettingsRepository(private val context: Context) {
             preferences[AUTO_CONNECT_KEY] ?: false
         }
 
-    suspend fun setDnsProvider(provider: String) {
+    suspend fun setDnsProviderId(providerId: String) {
         context.dataStore.edit { preferences ->
-            preferences[DNS_PROVIDER_KEY] = provider
+            preferences[DNS_PROVIDER_ID_KEY] = providerId
+        }
+    }
+
+    suspend fun setDnsProtocol(protocol: String) {
+        context.dataStore.edit { preferences ->
+            preferences[DNS_PROTOCOL_KEY] = protocol
         }
     }
 

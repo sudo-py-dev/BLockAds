@@ -74,4 +74,20 @@
     <string name="notification_fallback_text">ה-DNS הראשי אינו מגיב. משתמש בגיבוי.</string>
     <string name="notification_recovery_title">DNS שוחזר</string>
     <string name="notification_recovery_text">ה-DNS הראשי מגיב שוב.</string>
+    <string name="desc_secured">מאובטח</string>
+    <string name="status_connection_paused">החיבור מושהה</string>
+    <string name="status_secured_doh">מאובטח באמצעות DNS-over-HTTPS</string>
+    <string name="status_secured_dot">מאובטח באמצעות DNS-over-TLS</string>
+    <string name="live_threat_monitor">מעקב תעבורה בזמן אמת</string>
+    <string name="listening_traffic">&gt; מאזין לתעבורה...</string>
+    <string name="status_blocked">[נחסם]</string>
+    <string name="status_allowed">[מורשה]</string>
+    <string name="title_privacy_policy">מדיניות פרטיות</string>
+    <string name="desc_privacy_redirect">אתה עומד להיות מועבר למדיניות הפרטיות של הספק בדפדפן שלך. האם ברצונך להמשיך?</string>
+    <string name="btn_continue">המשך</string>
+    <string name="btn_cancel">ביטול</string>
+    <string name="protocol_doh">DNS-over-HTTPS</string>
+    <string name="protocol_dot">DNS-over-TLS</string>
+    <string name="desc_open_logs">פתח יומנים</string>
+    <string name="desc_back">חזור</string>
 </resources>

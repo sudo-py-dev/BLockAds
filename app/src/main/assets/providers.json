@@ -1,0 +1,72 @@
+[
+  {
+    "id": "adguard_recommended",
+    "name": "AdGuard Recommended",
+    "dohUrl": "https://dns.adguard-dns.com/dns-query",
+    "dotIp": "94.140.14.14",
+    "privacyUrl": "https://adguard-dns.io/en/privacy.html"
+  },
+  {
+    "id": "adguard_family",
+    "name": "AdGuard Family",
+    "dohUrl": "https://family.adguard-dns.com/dns-query",
+    "dotIp": "94.140.14.15",
+    "privacyUrl": "https://adguard-dns.io/en/privacy.html"
+  },
+  {
+    "id": "controld_adblock",
+    "name": "Control D AdBlock",
+    "dohUrl": "https://freedns.controld.com/p1",
+    "dotIp": "76.76.2.2",
+    "privacyUrl": "https://controld.com/privacy"
+  },
+  {
+    "id": "mullvad_adblock",
+    "name": "Mullvad AdBlock",
+    "dohUrl": "https://adblock.doh.mullvad.net/dns-query",
+    "dotIp": "194.242.2.3",
+    "privacyUrl": "https://mullvad.net/en/help/privacy-policy/"
+  },
+  {
+    "id": "cloudflare_security",
+    "name": "Cloudflare Security",
+    "dohUrl": "https://security.cloudflare-dns.com/dns-query",
+    "dotIp": "1.1.1.2",
+    "privacyUrl": "https://www.cloudflare.com/privacypolicy/"
+  },
+  {
+    "id": "cleanbrowsing_family",
+    "name": "CleanBrowsing Family",
+    "dohUrl": "https://doh.cleanbrowsing.org/doh/family-filter/",
+    "dotIp": "185.228.168.168",
+    "privacyUrl": "https://cleanbrowsing.org/privacy"
+  },
+  {
+    "id": "quad9_malware",
+    "name": "Quad9 Malware Blocking",
+    "dohUrl": "https://dns.quad9.net/dns-query",
+    "dotIp": "9.9.9.9",
+    "privacyUrl": "https://quad9.net/privacy/policy/"
+  },
+  {
+    "id": "alternate_dns",
+    "name": "Alternate DNS",
+    "dohUrl": "https://dns.alternate-dns.com/dns-query",
+    "dotIp": "76.76.19.19",
+    "privacyUrl": "https://alternate-dns.com/privacy.html"
+  },
+  {
+    "id": "cira_canadian_shield",
+    "name": "CIRA Canadian Shield (Protected)",
+    "dohUrl": "https://protected.canadianshield.cira.ca/dns-query",
+    "dotIp": "protected.canadianshield.cira.ca",
+    "privacyUrl": "https://www.cira.ca/"
+  },
+  {
+    "id": "opendns",
+    "name": "OpenDNS",
+    "dohUrl": "https://doh.opendns.com/dns-query",
+    "dotIp": "dns.opendns.com",
+    "privacyUrl": "https://www.cisco.com/c/en/us/about/legal/privacy-full.html"
+  }
+]

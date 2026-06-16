@@ -1,5 +1,7 @@
 package com.blockads.vpn.ui.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -10,6 +12,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,16 +30,23 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,12 +63,14 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.blockads.vpn.R
+import com.blockads.vpn.data.DnsLogManager
 import com.blockads.vpn.data.DnsProviders
 import com.blockads.vpn.data.DnsStatsManager
 import com.blockads.vpn.data.SettingsRepository
@@ -77,14 +90,19 @@ fun HomeScreen(
     val isConnected = vpnState != VpnState.DISCONNECTED
     val isPaused = vpnState == VpnState.PAUSED
 
-    val dnsProviderIp by settingsRepository.dnsProvider.collectAsState(initial = SettingsRepository.DEFAULT_DNS)
+    val dnsProviderId by settingsRepository.dnsProviderId.collectAsState(initial = SettingsRepository.DEFAULT_DNS_ID)
+    val dnsProtocol by settingsRepository.dnsProtocol.collectAsState(initial = SettingsRepository.DEFAULT_PROTOCOL)
 
     var showDnsSheet by remember { mutableStateOf(false) }
     var showPauseSheet by remember { mutableStateOf(false) }
 
+    val scrollState = androidx.compose.foundation.rememberScrollState()
     Column(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
-        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(scrollState)
+            .padding(vertical = 48.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val statusText =
@@ -222,6 +240,29 @@ fun HomeScreen(
 
         if (isConnected) {
             Spacer(modifier = Modifier.height(16.dp))
+            Surface(
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                shape = RoundedCornerShape(50),
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = if (isPaused) Icons.Default.Warning else Icons.Default.Lock,
+                        contentDescription = stringResource(R.string.desc_secured),
+                        tint = statusColor,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (isPaused) stringResource(R.string.status_connection_paused) else if (dnsProtocol == "doh") stringResource(R.string.status_secured_doh) else stringResource(R.string.status_secured_dot),
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = statusColor
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
                     if (isPaused) {
@@ -240,6 +281,56 @@ fun HomeScreen(
             }
         } else {
             Spacer(modifier = Modifier.height(64.dp))
+        }
+
+        val logs by DnsLogManager.logs.collectAsState()
+
+        if (isConnected && !isPaused) {
+            Spacer(modifier = Modifier.height(24.dp))
+            val recentLogs = logs.take(3)
+            Surface(
+                modifier = Modifier.fillMaxWidth(0.9f).clip(RoundedCornerShape(12.dp)),
+                color = Color(0xFF0F172A), // Dark slate
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(modifier = Modifier.size(8.dp).background(Color(0xFF00FF41), CircleShape))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(R.string.live_threat_monitor),
+                            color = Color(0xFF00FF41),
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    if (recentLogs.isEmpty()) {
+                        Text(
+                            text = stringResource(R.string.listening_traffic),
+                            color = Color.Gray,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                        )
+                    } else {
+                        recentLogs.forEach { log ->
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                Text(
+                                    text = "> ${log.domain.take(25)}${if (log.domain.length > 25) "..." else ""}",
+                                    color = Color.LightGray,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                                )
+                                Text(
+                                    text = if (log.isBlocked) stringResource(R.string.status_blocked) else stringResource(R.string.status_allowed),
+                                    color = if (log.isBlocked) Color(0xFFEF4444) else Color(0xFF00FF41),
+                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                    }
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -328,15 +419,22 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        val providerNameResId = DnsProviders.getNameResByIp(dnsProviderIp)
-                        val providerName = providerNameResId?.let { stringResource(it) } ?: stringResource(R.string.custom_dns)
+                        val provider = DnsProviders.getProviderById(dnsProviderId)
+                        val providerName = provider?.name ?: stringResource(R.string.custom_dns)
                         CompanyAvatar(name = providerName)
                         Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = providerName,
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
+                        Column {
+                            Text(
+                                text = providerName,
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+                            Text(
+                                text = if (dnsProtocol == "doh") stringResource(R.string.protocol_doh) else stringResource(R.string.protocol_dot),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
+                        }
                     }
                 }
                 Icon(
@@ -351,13 +449,19 @@ fun HomeScreen(
     if (showDnsSheet) {
         ModalBottomSheet(onDismissRequest = { showDnsSheet = false }) {
             DnsSelectionSheetContent(
-                currentIp = dnsProviderIp,
-                onSelect = { ip ->
+                currentId = dnsProviderId,
+                currentProtocol = dnsProtocol,
+                onSelectId = { id ->
                     coroutineScope.launch {
-                        settingsRepository.setDnsProvider(ip)
+                        settingsRepository.setDnsProviderId(id)
                         showDnsSheet = false
                     }
                 },
+                onSelectProtocol = { protocol ->
+                    coroutineScope.launch {
+                        settingsRepository.setDnsProtocol(protocol)
+                    }
+                }
             )
         }
     }
@@ -392,70 +496,98 @@ fun HomeScreen(
     }
 }
 
-@Suppress("DEPRECATION")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DnsSelectionSheetContent(
-    currentIp: String,
-    onSelect: (String) -> Unit,
+    currentId: String,
+    currentProtocol: String,
+    onSelectId: (String) -> Unit,
+    onSelectProtocol: (String) -> Unit,
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    var providerPrivacyDialog by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
-        SearchBar(
-            query = searchQuery,
-            onQueryChange = { searchQuery = it },
-            onSearch = { },
-            active = false,
-            onActiveChange = { },
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
+        // Protocol Toggle
+        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+            val options = listOf("doh" to stringResource(R.string.protocol_doh), "dot" to stringResource(R.string.protocol_dot))
+            options.forEachIndexed { index, (value, label) ->
+                SegmentedButton(
+                    selected = currentProtocol == value,
+                    onClick = { onSelectProtocol(value) },
+                    shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size)
+                ) {
+                    Text(label)
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(8.dp))
+
+        androidx.compose.material3.OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            modifier = Modifier.fillMaxWidth(),
             placeholder = { Text(stringResource(R.string.search_dns)) },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-        ) {}
+            singleLine = true,
+            shape = RoundedCornerShape(50)
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        val filteredList =
-            DnsProviders.providers.filter { provider ->
-                val name = stringResource(provider.nameResId)
-                name.contains(searchQuery, ignoreCase = true) || provider.ip.contains(searchQuery, ignoreCase = true)
-            }
-
-        val isCustomIp = android.util.Patterns.IP_ADDRESS.matcher(searchQuery).matches()
+        val filteredList = DnsProviders.providers.filter { provider ->
+            provider.name.contains(searchQuery, ignoreCase = true) || provider.id.contains(searchQuery, ignoreCase = true)
+        }
 
         LazyColumn(
             contentPadding = PaddingValues(bottom = 32.dp),
         ) {
-            if (isCustomIp && filteredList.none { it.ip == searchQuery }) {
-                item {
-                    ListItem(
-                        headlineContent = { Text(stringResource(R.string.custom_dns), fontWeight = FontWeight.SemiBold) },
-                        supportingContent = { Text(searchQuery) },
-                        leadingContent = { CompanyAvatar(name = stringResource(R.string.custom)) },
-                        modifier = Modifier.padding(vertical = 4.dp).clip(RoundedCornerShape(16.dp)).clickable { onSelect(searchQuery) },
-                        colors =
-                            ListItemDefaults.colors(
-                                containerColor = if (searchQuery == currentIp) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
-                            ),
-                    )
-                }
-            }
             items(filteredList) { provider ->
-                val name = stringResource(provider.nameResId)
                 ListItem(
-                    headlineContent = { Text(name, fontWeight = FontWeight.SemiBold) },
-                    supportingContent = { Text(provider.ip) },
-                    leadingContent = { CompanyAvatar(name = name) },
-                    modifier = Modifier.padding(vertical = 4.dp).clip(RoundedCornerShape(16.dp)).clickable { onSelect(provider.ip) },
+                    headlineContent = { Text(provider.name, fontWeight = FontWeight.SemiBold) },
+                    supportingContent = { Text(if (currentProtocol == "doh") provider.dohUrl else provider.dotIp) },
+                    leadingContent = { CompanyAvatar(name = provider.name) },
+                    trailingContent = {
+                        if (provider.privacyUrl.isNotEmpty()) {
+                            IconButton(onClick = {
+                                providerPrivacyDialog = provider.privacyUrl
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Info, 
+                                    contentDescription = stringResource(R.string.title_privacy_policy),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    },
+                    modifier = Modifier.padding(vertical = 4.dp).clip(RoundedCornerShape(16.dp)).clickable { onSelectId(provider.id) },
                     colors =
                         ListItemDefaults.colors(
-                            containerColor = if (provider.ip == currentIp) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                            containerColor = if (provider.id == currentId) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
                         ),
                 )
             }
         }
+    }
+
+    if (providerPrivacyDialog != null) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { providerPrivacyDialog = null },
+            title = { Text(stringResource(R.string.title_privacy_policy)) },
+            text = { Text(stringResource(R.string.desc_privacy_redirect)) },
+            confirmButton = {
+                Button(onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(providerPrivacyDialog))
+                    context.startActivity(intent)
+                    providerPrivacyDialog = null
+                }) { Text(stringResource(R.string.btn_continue)) }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { providerPrivacyDialog = null }) { Text(stringResource(R.string.btn_cancel)) }
+            }
+        )
     }
 }
 

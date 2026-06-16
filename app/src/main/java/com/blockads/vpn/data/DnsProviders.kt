@@ -1,35 +1,56 @@
 package com.blockads.vpn.data
 
-import com.blockads.vpn.R
+import android.content.Context
+import com.blockads.vpn.util.Logger
+import org.json.JSONArray
 
 data class DnsProvider(
-    val nameResId: Int,
-    val ip: String
+    val id: String,
+    val name: String,
+    val dohUrl: String,
+    val dotIp: String,
+    val privacyUrl: String
 )
 
 object DnsProviders {
-    val providers = listOf(
-        DnsProvider(R.string.dns_adguard_recommended, "94.140.14.14"),
-        DnsProvider(R.string.dns_adguard_2, "94.140.15.15"),
-        DnsProvider(R.string.dns_adguard_family, "94.140.14.15"),
-        DnsProvider(R.string.dns_adguard_family_2, "94.140.15.16"),
-        DnsProvider(R.string.dns_controld_adblock, "76.76.2.2"),
-        DnsProvider(R.string.dns_mullvad_adblock, "194.242.2.3"),
-        DnsProvider(R.string.dns_mullvad_tracker, "194.242.2.4"),
-        DnsProvider(R.string.dns_cloudflare_security, "1.1.1.2"),
-        DnsProvider(R.string.dns_cloudflare_family, "1.1.1.3"),
-        DnsProvider(R.string.dns_cleanbrowsing_family, "185.228.168.168"),
-        DnsProvider(R.string.dns_cleanbrowsing_adult, "185.228.168.10"),
-        DnsProvider(R.string.dns_quad9_malware, "9.9.9.9"),
-        DnsProvider(R.string.dns_alternate_dns, "76.76.19.19"),
-        DnsProvider(R.string.dns_alternate_dns_2, "76.76.20.20")
-    )
+    private val _providers = mutableListOf<DnsProvider>()
+    val providers: List<DnsProvider> get() = _providers
 
-    fun getIpByNameResId(nameResId: Int): String {
-        return providers.find { it.nameResId == nameResId }?.ip ?: "94.140.14.14"
+    fun init(context: Context) {
+        if (_providers.isNotEmpty()) return
+        try {
+            val inputStream = context.assets.open("providers.json")
+            val jsonString = inputStream.bufferedReader().use { it.readText() }
+            val jsonArray = JSONArray(jsonString)
+
+            for (i in 0 until jsonArray.length()) {
+                val obj = jsonArray.getJSONObject(i)
+                _providers.add(
+                    DnsProvider(
+                        id = obj.getString("id"),
+                        name = obj.getString("name"),
+                        dohUrl = obj.getString("dohUrl"),
+                        dotIp = obj.getString("dotIp"),
+                        privacyUrl = obj.getString("privacyUrl")
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            Logger.e("DnsProviders", "Failed to load providers.json", e)
+            // Fallback provider in case JSON fails
+            _providers.add(
+                DnsProvider(
+                    id = "adguard_recommended",
+                    name = "AdGuard Recommended",
+                    dohUrl = "https://dns.adguard-dns.com/dns-query",
+                    dotIp = "94.140.14.14",
+                    privacyUrl = "https://adguard-dns.io/en/privacy.html"
+                )
+            )
+        }
     }
 
-    fun getNameResByIp(ip: String): Int? {
-        return providers.find { it.ip == ip }?.nameResId
+    fun getProviderById(id: String): DnsProvider? {
+        return providers.find { it.id == id }
     }
 }

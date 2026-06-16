@@ -74,4 +74,20 @@
     <string name="notification_fallback_text">Основной DNS не отвечает. Используется резервный.</string>
     <string name="notification_recovery_title">DNS восстановлен</string>
     <string name="notification_recovery_text">Основной DNS снова отвечает.</string>
+    <string name="desc_secured">Защищено</string>
+    <string name="status_connection_paused">Соединение приостановлено</string>
+    <string name="status_secured_doh">Защищено через DNS-over-HTTPS</string>
+    <string name="status_secured_dot">Защищено через DNS-over-TLS</string>
+    <string name="live_threat_monitor">МОНИТОРИНГ ТРАФИКА</string>
+    <string name="listening_traffic">&gt; Прослушивание трафика...</string>
+    <string name="status_blocked">[ЗАБЛОКИРОВАНО]</string>
+    <string name="status_allowed">[РАЗРЕШЕНО]</string>
+    <string name="title_privacy_policy">Политика конфиденциальности</string>
+    <string name="desc_privacy_redirect">Вы будете перенаправлены на политику конфиденциальности провайдера в вашем браузере. Вы хотите продолжить?</string>
+    <string name="btn_continue">Продолжить</string>
+    <string name="btn_cancel">Отмена</string>
+    <string name="protocol_doh">DNS-over-HTTPS</string>
+    <string name="protocol_dot">DNS-over-TLS</string>
+    <string name="desc_open_logs">Открыть журналы</string>
+    <string name="desc_back">Назад</string>
 </resources>

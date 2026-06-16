@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.ParcelFileDescriptor
 import androidx.core.app.NotificationCompat
 import com.blockads.vpn.R
+import com.blockads.vpn.data.DnsProviders
 import com.blockads.vpn.data.SettingsRepository
 import com.blockads.vpn.util.Logger
 import kotlinx.coroutines.CoroutineScope
@@ -154,7 +155,11 @@ class BlockAdsVpnService : VpnService() {
         serviceScope.launch {
             try {
                 val settings = SettingsRepository(applicationContext)
-                val upstreamDnsIp = settings.dnsProvider.first()
+                val providerId = settings.dnsProviderId.first()
+                val protocol = settings.dnsProtocol.first()
+                
+                val provider = DnsProviders.getProviderById(providerId)
+                val upstreamEndpoint = if (protocol == "dot") provider?.dotIp ?: "94.140.14.14" else provider?.dohUrl ?: "https://dns.adguard-dns.com/dns-query"
 
                 val builder = Builder()
                 builder.setSession(getString(R.string.app_name))
@@ -168,7 +173,7 @@ class BlockAdsVpnService : VpnService() {
                 vpnInterface = builder.establish()
 
                 vpnInterface?.let {
-                    dnsTunnel = DnsTunnel(this@BlockAdsVpnService, it.fileDescriptor, upstreamDnsIp, serviceScope) { isFallback ->
+                    dnsTunnel = DnsTunnel(this@BlockAdsVpnService, it.fileDescriptor, upstreamEndpoint, protocol, serviceScope) { isFallback ->
                         handleFallbackStateChange(isFallback)
                     }
                     dnsTunnel?.start()
@@ -192,7 +197,14 @@ class BlockAdsVpnService : VpnService() {
             Logger.e("BlockAdsVpnService", "Error closing VPN interface", e)
         }
         vpnInterface = null
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.cancel(NOTIFICATION_ID)
         stopSelf()
+    }
+
+    override fun onRevoke() {
+        super.onRevoke()
+        stopVpn()
     }
 
     override fun onDestroy() {

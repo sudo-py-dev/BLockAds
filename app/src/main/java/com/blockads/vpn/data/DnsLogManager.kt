@@ -13,7 +13,8 @@ data class DnsLogEntry(
 )
 
 object DnsLogManager {
-    private const val MAX_LOGS = 500
+    private const val MAX_LOGS = 200
+    private val logQueue = java.util.concurrent.ConcurrentLinkedDeque<DnsLogEntry>()
 
     private val _logs = MutableStateFlow<List<DnsLogEntry>>(emptyList())
     val logs: StateFlow<List<DnsLogEntry>> = _logs.asStateFlow()
@@ -22,19 +23,15 @@ object DnsLogManager {
         domain: String,
         isBlocked: Boolean,
     ) {
-        val entry = DnsLogEntry(domain, isBlocked)
-        _logs.update { currentList ->
-            val newList = currentList.toMutableList()
-            newList.add(0, entry) // Add to top
-            if (newList.size > MAX_LOGS) {
-                newList.subList(0, MAX_LOGS)
-            } else {
-                newList
-            }
+        logQueue.addFirst(DnsLogEntry(domain, isBlocked))
+        while (logQueue.size > MAX_LOGS) {
+            logQueue.pollLast()
         }
+        _logs.value = logQueue.toList()
     }
 
     fun clearLogs() {
+        logQueue.clear()
         _logs.value = emptyList()
     }
 }
