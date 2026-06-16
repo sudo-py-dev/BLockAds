@@ -1,7 +1,7 @@
 <h1 align="center">
-  <img src="logo.svg" width="100" alt="BlockAds Logo" />
+  <img src="logo.svg" width="100" alt="AdsBlock Logo" />
   <br/>
-  BlockAds VPN
+  AdsBlock VPN
 </h1>
 
 <p align="center">
@@ -19,7 +19,7 @@
 
 ## 🛡️ Overview
 
-BlockAds is an on-device VPN application designed to intercept and filter DNS requests in real-time, effectively blocking ads, trackers, and malicious domains before they even load. Built entirely with **Jetpack Compose** and modern Kotlin coroutines, it provides a slick, localized, and ultra-fast user experience with deep transparency into exactly what is happening under the hood.
+AdsBlock is an on-device VPN application designed to intercept and filter DNS requests in real-time, effectively blocking ads, trackers, and malicious domains before they even load. Built entirely with **Jetpack Compose** and modern Kotlin coroutines, it provides a slick, localized, and ultra-fast user experience with deep transparency into exactly what is happening under the hood.
 
 Developed by **ed apps**.
 
@@ -35,7 +35,7 @@ Developed by **ed apps**.
 
 ## 🏗️ Architecture
 
-BlockAds leverages modern Android architecture patterns to ensure strict safety, low overhead, and scalability:
+AdsBlock leverages modern Android architecture patterns to ensure strict safety, low overhead, and scalability:
 
 - **UI Layer**: Jetpack Compose (`Material 3`, `NavHost`)
 - **State Management**: `StateFlow` and `DataStore Preferences`
@@ -45,12 +45,12 @@ BlockAds leverages modern Android architecture patterns to ensure strict safety,
 
 ## 🚀 Building from Source
 
-To build BlockAds locally, you need [Android Studio](https://developer.android.com/studio) installed.
+To build AdsBlock locally, you need [Android Studio](https://developer.android.com/studio) installed.
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/sudo-py-dev/BLockAds.git
-   cd BLockAds
+   git clone https://github.com/sudo-py-dev/adsblock.git
+   cd AdsBlock
    ```
 
 2. **Open in Android Studio:**
@@ -64,7 +64,7 @@ To build BlockAds locally, you need [Android Studio](https://developer.android.c
 
 ## 🌍 Localization
 
-BlockAds natively supports multiple languages. The app strictly enforces layout directions (LTR/RTL) across Jetpack Compose automatically based on active locales. If you wish to contribute a translation, please submit a PR modifying the `strings.xml` resources!
+AdsBlock natively supports multiple languages. The app strictly enforces layout directions (LTR/RTL) across Jetpack Compose automatically based on active locales. If you wish to contribute a translation, please submit a PR modifying the `strings.xml` resources!
 
 ## 📜 License
 

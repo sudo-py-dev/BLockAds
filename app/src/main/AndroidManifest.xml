@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
-        android:name=".BlockAdsApp"
+        android:name=".AdsBlockApp"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -18,13 +18,13 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BlockAds"
+        android:theme="@style/Theme.AdsBlock"
         tools:targetApi="34">
         
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.BlockAds">
+            android:theme="@style/Theme.AdsBlock">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -34,11 +34,11 @@
         <activity
             android:name=".ui.CrashActivity"
             android:exported="false"
-            android:theme="@style/Theme.BlockAds"
+            android:theme="@style/Theme.AdsBlock"
             android:launchMode="singleTask" />
 
         <service
-            android:name=".service.BlockAdsVpnService"
+            android:name=".service.AdsBlockVpnService"
             android:exported="true"
             android:permission="android.permission.BIND_VPN_SERVICE">
             <intent-filter>

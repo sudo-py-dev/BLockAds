@@ -33,7 +33,7 @@
     <string name="logs_allowed">Разрешено</string>
     <string name="logs_empty">Пока нет запросов</string>
 
-    <string name="about_title">О BlockAds</string>
+    <string name="about_title">О AdsBlock</string>
     <string name="about_version">Версия: %1$s</string>
     <string name="about_developer">Разработчик: ed apps</string>
     <string name="about_github">Репозиторий GitHub</string>
@@ -52,7 +52,7 @@
     <string name="desc_dropdown_open">Открыть меню</string>
     <string name="desc_crash_icon">Иконка ошибки</string>
     <string name="desc_app_logo">Логотип приложения</string>
-    <string name="notification_vpn_title">BlockAds VPN</string>
+    <string name="notification_vpn_title">AdsBlock VPN</string>
     <string name="notification_vpn_text">VPN блокировщик рекламы активен</string>
     <string name="notification_channel_name">Служба VPN</string>
 

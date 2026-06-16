@@ -1,4 +1,4 @@
-package com.blockads.vpn.ui.screens
+package com.adsblock.vpn.ui.screens
 
 import android.content.Intent
 import android.net.Uri
@@ -69,12 +69,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.blockads.vpn.R
-import com.blockads.vpn.data.DnsLogManager
-import com.blockads.vpn.data.DnsProviders
-import com.blockads.vpn.data.DnsStatsManager
-import com.blockads.vpn.data.SettingsRepository
-import com.blockads.vpn.service.VpnState
+import com.adsblock.vpn.R
+import com.adsblock.vpn.data.DnsLogManager
+import com.adsblock.vpn.data.DnsProviders
+import com.adsblock.vpn.data.DnsStatsManager
+import com.adsblock.vpn.data.SettingsRepository
+import com.adsblock.vpn.service.VpnState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

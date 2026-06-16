@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "BlockAds"
+rootProject.name = "AdsBlock"
 include(":app")

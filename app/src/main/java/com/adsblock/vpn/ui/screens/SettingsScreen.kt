@@ -1,4 +1,4 @@
-package com.blockads.vpn.ui.screens
+package com.adsblock.vpn.ui.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,8 +46,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.blockads.vpn.R
-import com.blockads.vpn.data.SettingsRepository
+import com.adsblock.vpn.R
+import com.adsblock.vpn.data.SettingsRepository
 import kotlinx.coroutines.launch
 
 data class SettingOption(val key: String, val label: String)

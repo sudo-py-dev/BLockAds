@@ -1,7 +1,7 @@
-package com.blockads.vpn.data
+package com.adsblock.vpn.data
 
 import android.content.Context
-import com.blockads.vpn.util.Logger
+import com.adsblock.vpn.util.Logger
 import org.json.JSONArray
 
 data class DnsProvider(

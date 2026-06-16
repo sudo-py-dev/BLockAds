@@ -1,9 +1,9 @@
-package com.blockads.vpn.service
+package com.adsblock.vpn.service
 
 import android.net.VpnService
-import com.blockads.vpn.data.DnsLogManager
-import com.blockads.vpn.data.DnsStatsManager
-import com.blockads.vpn.util.Logger
+import com.adsblock.vpn.data.DnsLogManager
+import com.adsblock.vpn.data.DnsStatsManager
+import com.adsblock.vpn.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.blockads.vpn.service
+package com.adsblock.vpn.service
 
 import java.nio.ByteBuffer
 

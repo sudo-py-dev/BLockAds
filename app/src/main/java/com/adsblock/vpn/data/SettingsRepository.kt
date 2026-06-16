@@ -1,4 +1,4 @@
-package com.blockads.vpn.data
+package com.adsblock.vpn.data
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit

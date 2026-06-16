@@ -1,4 +1,4 @@
-package com.blockads.vpn.data
+package com.adsblock.vpn.data
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

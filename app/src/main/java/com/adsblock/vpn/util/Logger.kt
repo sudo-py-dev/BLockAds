@@ -1,7 +1,7 @@
-package com.blockads.vpn.util
+package com.adsblock.vpn.util
 
 import android.util.Log
-import com.blockads.vpn.BuildConfig
+import com.adsblock.vpn.BuildConfig
 
 object Logger {
     fun d(tag: String, msg: String) {

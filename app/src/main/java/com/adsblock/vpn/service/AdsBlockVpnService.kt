@@ -1,4 +1,4 @@
-package com.blockads.vpn.service
+package com.adsblock.vpn.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -8,10 +8,10 @@ import android.net.VpnService
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import androidx.core.app.NotificationCompat
-import com.blockads.vpn.R
-import com.blockads.vpn.data.DnsProviders
-import com.blockads.vpn.data.SettingsRepository
-import com.blockads.vpn.util.Logger
+import com.adsblock.vpn.R
+import com.adsblock.vpn.data.DnsProviders
+import com.adsblock.vpn.data.SettingsRepository
+import com.adsblock.vpn.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,17 +21,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class BlockAdsVpnService : VpnService() {
+class AdsBlockVpnService : VpnService() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var vpnInterface: ParcelFileDescriptor? = null
     var dnsTunnel: DnsTunnel? = null
     private var pauseJob: Job? = null
 
     companion object {
-        const val ACTION_START = "com.blockads.vpn.START"
-        const val ACTION_STOP = "com.blockads.vpn.STOP"
-        const val ACTION_PAUSE = "com.blockads.vpn.PAUSE"
-        const val ACTION_RESUME = "com.blockads.vpn.RESUME"
+        const val ACTION_START = "com.adsblock.vpn.START"
+        const val ACTION_STOP = "com.adsblock.vpn.STOP"
+        const val ACTION_PAUSE = "com.adsblock.vpn.PAUSE"
+        const val ACTION_RESUME = "com.adsblock.vpn.RESUME"
         const val EXTRA_PAUSE_DURATION_MINS = "extra_pause_duration_mins"
         private const val NOTIFICATION_CHANNEL_ID = "vpn_channel"
         private const val NOTIFICATION_ID = 1
@@ -102,7 +102,7 @@ class BlockAdsVpnService : VpnService() {
                 .setOngoing(true)
 
         if (isPaused) {
-            val resumeIntent = Intent(this, BlockAdsVpnService::class.java).apply { action = ACTION_RESUME }
+            val resumeIntent = Intent(this, AdsBlockVpnService::class.java).apply { action = ACTION_RESUME }
             val resumePendingIntent =
                 PendingIntent.getService(
                     this,
@@ -113,7 +113,7 @@ class BlockAdsVpnService : VpnService() {
             builder.addAction(android.R.drawable.ic_media_play, getString(R.string.btn_resume), resumePendingIntent)
         } else {
             val pauseIntent =
-                Intent(this, BlockAdsVpnService::class.java).apply {
+                Intent(this, AdsBlockVpnService::class.java).apply {
                     action = ACTION_PAUSE
                     putExtra(EXTRA_PAUSE_DURATION_MINS, 15L)
                 }
@@ -179,14 +179,14 @@ class BlockAdsVpnService : VpnService() {
                 vpnInterface = builder.establish()
 
                 vpnInterface?.let {
-                    dnsTunnel = DnsTunnel(this@BlockAdsVpnService, it.fileDescriptor, upstreamEndpoint, protocol, serviceScope) { isFallback ->
+                    dnsTunnel = DnsTunnel(this@AdsBlockVpnService, it.fileDescriptor, upstreamEndpoint, protocol, serviceScope) { isFallback ->
                         handleFallbackStateChange(isFallback)
                     }
                     dnsTunnel?.start()
                     updateNotification()
                 }
             } catch (e: Exception) {
-                Logger.e("BlockAdsVpnService", "Error starting VPN", e)
+                Logger.e("AdsBlockVpnService", "Error starting VPN", e)
                 stopVpn()
             }
         }
@@ -200,7 +200,7 @@ class BlockAdsVpnService : VpnService() {
         try {
             vpnInterface?.close()
         } catch (e: Exception) {
-            Logger.e("BlockAdsVpnService", "Error closing VPN interface", e)
+            Logger.e("AdsBlockVpnService", "Error closing VPN interface", e)
         }
         vpnInterface = null
         val manager = getSystemService(NotificationManager::class.java)

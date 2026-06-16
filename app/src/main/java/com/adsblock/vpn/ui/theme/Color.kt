@@ -1,4 +1,4 @@
-package com.blockads.vpn.ui.theme
+package com.adsblock.vpn.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

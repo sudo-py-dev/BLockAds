@@ -13,11 +13,11 @@ plugins {
 }
 
 android {
-    namespace = "com.blockads.vpn"
+    namespace = "com.adsblock.vpn"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.blockads.vpn"
+        applicationId = "com.adsblock.vpn"
         minSdk = 26
         targetSdk = 35
         versionCode = 1

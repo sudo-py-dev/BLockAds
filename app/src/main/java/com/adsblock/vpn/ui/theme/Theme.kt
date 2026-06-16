@@ -1,4 +1,4 @@
-package com.blockads.vpn.ui.theme
+package com.adsblock.vpn.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -36,7 +36,7 @@ private val LightColorScheme =
     )
 
 @Composable
-fun BlockAdsTheme(
+fun AdsBlockTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit,

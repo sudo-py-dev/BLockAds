@@ -1,4 +1,4 @@
-package com.blockads.vpn.ui
+package com.adsblock.vpn.ui
 
 import android.Manifest
 import android.content.Intent
@@ -29,23 +29,23 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.blockads.vpn.R
-import com.blockads.vpn.data.SettingsRepository
-import com.blockads.vpn.service.BlockAdsVpnService
-import com.blockads.vpn.service.VpnStateManager
-import com.blockads.vpn.ui.screens.AboutScreen
-import com.blockads.vpn.ui.screens.HomeScreen
-import com.blockads.vpn.ui.screens.LogsScreen
-import com.blockads.vpn.ui.screens.SettingsScreen
-import com.blockads.vpn.ui.theme.BlockAdsTheme
+import com.adsblock.vpn.R
+import com.adsblock.vpn.data.SettingsRepository
+import com.adsblock.vpn.service.AdsBlockVpnService
+import com.adsblock.vpn.service.VpnStateManager
+import com.adsblock.vpn.ui.screens.AboutScreen
+import com.adsblock.vpn.ui.screens.HomeScreen
+import com.adsblock.vpn.ui.screens.LogsScreen
+import com.adsblock.vpn.ui.screens.SettingsScreen
+import com.adsblock.vpn.ui.theme.AdsBlockTheme
 
 class MainActivity : ComponentActivity() {
     private val vpnRequestLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val intent =
-                    Intent(this, BlockAdsVpnService::class.java).apply {
-                        action = BlockAdsVpnService.ACTION_START
+                    Intent(this, AdsBlockVpnService::class.java).apply {
+                        action = AdsBlockVpnService.ACTION_START
                     }
                 startService(intent)
             }
@@ -122,7 +122,7 @@ class MainActivity : ComponentActivity() {
                 }
 
             androidx.compose.runtime.CompositionLocalProvider(androidx.compose.ui.platform.LocalLayoutDirection provides layoutDirection) {
-                BlockAdsTheme(darkTheme = isDarkTheme) {
+                AdsBlockTheme(darkTheme = isDarkTheme) {
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute = navBackStackEntry?.destination?.route
@@ -190,31 +190,31 @@ class MainActivity : ComponentActivity() {
                                                 vpnRequestLauncher.launch(vpnIntent)
                                             } else {
                                                 val intent =
-                                                    Intent(this@MainActivity, BlockAdsVpnService::class.java).apply {
-                                                        action = BlockAdsVpnService.ACTION_START
+                                                    Intent(this@MainActivity, AdsBlockVpnService::class.java).apply {
+                                                        action = AdsBlockVpnService.ACTION_START
                                                     }
                                                 startService(intent)
                                             }
                                         } else {
                                             val intent =
-                                                Intent(this@MainActivity, BlockAdsVpnService::class.java).apply {
-                                                    action = BlockAdsVpnService.ACTION_STOP
+                                                Intent(this@MainActivity, AdsBlockVpnService::class.java).apply {
+                                                    action = AdsBlockVpnService.ACTION_STOP
                                                 }
                                             startService(intent)
                                         }
                                     },
                                     onPauseVpn = { duration ->
                                         val intent =
-                                            Intent(this@MainActivity, BlockAdsVpnService::class.java).apply {
-                                                action = BlockAdsVpnService.ACTION_PAUSE
-                                                putExtra(BlockAdsVpnService.EXTRA_PAUSE_DURATION_MINS, duration)
+                                            Intent(this@MainActivity, AdsBlockVpnService::class.java).apply {
+                                                action = AdsBlockVpnService.ACTION_PAUSE
+                                                putExtra(AdsBlockVpnService.EXTRA_PAUSE_DURATION_MINS, duration)
                                             }
                                         startService(intent)
                                     },
                                     onResumeVpn = {
                                         val intent =
-                                            Intent(this@MainActivity, BlockAdsVpnService::class.java).apply {
-                                                action = BlockAdsVpnService.ACTION_RESUME
+                                            Intent(this@MainActivity, AdsBlockVpnService::class.java).apply {
+                                                action = AdsBlockVpnService.ACTION_RESUME
                                             }
                                         startService(intent)
                                     },

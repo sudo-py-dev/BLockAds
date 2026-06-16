@@ -1,4 +1,4 @@
-package com.blockads.vpn.ui.screens
+package com.adsblock.vpn.ui.screens
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -34,7 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.blockads.vpn.R
+import com.adsblock.vpn.R
 
 @Composable
 fun AboutScreen() {
@@ -112,7 +112,7 @@ fun AboutScreen() {
                 val intent =
                     android.content.Intent(
                         android.content.Intent.ACTION_VIEW,
-                        android.net.Uri.parse("https://github.com/sudo-py-dev/BLockAds.git"),
+                        android.net.Uri.parse("https://github.com/sudo-py-dev/adsblock.git"),
                     )
                 context.startActivity(intent)
             },

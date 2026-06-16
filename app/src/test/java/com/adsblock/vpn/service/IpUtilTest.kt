@@ -1,4 +1,4 @@
-package com.blockads.vpn.service
+package com.adsblock.vpn.service
 
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals

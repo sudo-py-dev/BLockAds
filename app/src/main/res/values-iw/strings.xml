@@ -33,7 +33,7 @@
     <string name="logs_allowed">אושר</string>
     <string name="logs_empty">אין עדיין שאילתות</string>
 
-    <string name="about_title">אודות BlockAds</string>
+    <string name="about_title">אודות AdsBlock</string>
     <string name="about_version">גרסה: %1$s</string>
     <string name="about_developer">פותח על ידי: ed apps</string>
     <string name="about_github">מאגר GitHub</string>
@@ -52,7 +52,7 @@
     <string name="desc_dropdown_open">פתח תפריט</string>
     <string name="desc_crash_icon">סמל קריסה</string>
     <string name="desc_app_logo">לוגו האפליקציה</string>
-    <string name="notification_vpn_title">BlockAds VPN</string>
+    <string name="notification_vpn_title">AdsBlock VPN</string>
     <string name="notification_vpn_text">VPN חוסם פרסומות פעיל</string>
     <string name="notification_channel_name">שירות VPN</string>
 

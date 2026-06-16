@@ -1,19 +1,19 @@
-package com.blockads.vpn
+package com.adsblock.vpn
 
 import android.app.Application
 import android.content.Intent
-import com.blockads.vpn.data.DnsProviders
-import com.blockads.vpn.ui.CrashActivity
-import com.blockads.vpn.util.Logger
+import com.adsblock.vpn.data.DnsProviders
+import com.adsblock.vpn.ui.CrashActivity
+import com.adsblock.vpn.util.Logger
 
-class BlockAdsApp : Application() {
+class AdsBlockApp : Application() {
     override fun onCreate() {
         super.onCreate()
         DnsProviders.init(this)
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
-            Logger.e("BlockAdsApp", "Uncaught exception", exception)
+            Logger.e("AdsBlockApp", "Uncaught exception", exception)
 
             val intent =
                 Intent(this, CrashActivity::class.java).apply {

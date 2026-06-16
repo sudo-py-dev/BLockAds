@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BlockAds</string>
+    <string name="app_name">AdsBlock</string>
     <string name="vpn_connected">VPN is Connected</string>
     <string name="vpn_disconnected">VPN is Disconnected</string>
     <string name="tap_to_connect">Tap to Connect</string>
@@ -38,7 +38,7 @@
     <string name="logs_allowed">Allowed</string>
     <string name="logs_empty">No queries yet</string>
 
-    <string name="about_title">About BlockAds</string>
+    <string name="about_title">About AdsBlock</string>
     <string name="about_version">Version: %1$s</string>
     <string name="about_developer">Developed by: ed apps</string>
     <string name="about_github">GitHub Repository</string>
@@ -57,7 +57,7 @@
     <string name="desc_dropdown_open">Open Dropdown</string>
     <string name="desc_crash_icon">Crash Icon</string>
     <string name="desc_app_logo">App Logo</string>
-    <string name="notification_vpn_title">BlockAds VPN</string>
+    <string name="notification_vpn_title">AdsBlock VPN</string>
     <string name="notification_vpn_text">Ad-blocking VPN is active</string>
     <string name="notification_channel_name">VPN Service</string>
 
@@ -66,7 +66,7 @@
     <string name="pause_duration_5m">5 Minutes</string>
     <string name="pause_duration_15m">15 Minutes</string>
     <string name="pause_duration_1h">1 Hour</string>
-    <string name="notification_paused_title">BlockAds VPN (Paused)</string>
+    <string name="notification_paused_title">AdsBlock VPN (Paused)</string>
     <string name="notification_paused_text">Ad-blocking is paused.</string>
     <string name="custom_dns">Custom DNS</string>
     <string name="custom">Custom</string>

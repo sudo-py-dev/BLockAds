@@ -1,4 +1,4 @@
-package com.blockads.vpn.ui.screens
+package com.adsblock.vpn.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -41,8 +41,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.blockads.vpn.R
-import com.blockads.vpn.data.DnsLogManager
+import com.adsblock.vpn.R
+import com.adsblock.vpn.data.DnsLogManager
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
