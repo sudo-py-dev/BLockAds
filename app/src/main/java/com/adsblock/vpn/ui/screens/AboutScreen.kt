@@ -8,6 +8,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -158,7 +159,15 @@ fun AboutScreen() {
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .shadow(8.dp, RoundedCornerShape(20.dp)),
+                    .shadow(8.dp, RoundedCornerShape(20.dp))
+                    .clickable {
+                        val intent =
+                            android.content.Intent(
+                                android.content.Intent.ACTION_VIEW,
+                                android.net.Uri.parse("https://raw.githubusercontent.com/sudo-py-dev/adsblock/refs/heads/main/privacy_policy.txt"),
+                            )
+                        context.startActivity(intent)
+                    },
             color = MaterialTheme.colorScheme.surfaceVariant,
             shape = RoundedCornerShape(20.dp),
         ) {
