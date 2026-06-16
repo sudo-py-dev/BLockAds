@@ -1,0 +1,24 @@
+Privacy Policy for AdsBlock VPN
+
+Last updated: June 16, 2026
+
+1. Introduction
+This Privacy Policy applies to the AdsBlock VPN application ("the App") developed by ed apps. We are committed to protecting your privacy and ensuring that your data remains yours. This policy explains our practices regarding data collection and usage.
+
+2. Zero-Logging Policy
+AdsBlock VPN is a strict zero-logging on-device VPN. We do not collect, store, log, or share any of your personal information, browsing history, DNS queries, IP addresses, or network traffic.
+
+3. How the App Works
+The App creates a local VPN interface on your device to intercept and filter DNS requests in real-time. This filtering happens entirely on your device. Your internet traffic and DNS queries are never sent to, routed through, or inspected by any external servers owned or operated by ed apps.
+
+4. Data Collection
+Because the App operates locally on your device, we do not collect any data. All query logs and statistics visible within the App are stored locally on your device and are never transmitted over the internet.
+
+5. Third-Party Services
+The App may connect to public DNS providers (e.g., Cloudflare, Google, or others) as configured by you to resolve non-blocked domains. Your interactions with these public DNS providers are subject to their respective privacy policies. 
+
+6. Changes to This Privacy Policy
+We may update our Privacy Policy from time to time. Any changes will be reflected in this document and updated within the repository and the app store.
+
+7. Contact Us
+If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us.
