@@ -127,8 +127,11 @@ class AdsBlockVpnService : VpnService() {
             builder.addAction(android.R.drawable.ic_media_pause, getString(R.string.btn_pause), pausePendingIntent)
         }
 
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.notify(NOTIFICATION_ID, builder.build())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(NOTIFICATION_ID, builder.build(), android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MANIFEST)
+        } else {
+            startForeground(NOTIFICATION_ID, builder.build())
+        }
     }
 
     private fun handleFallbackStateChange(isFallback: Boolean) {
@@ -203,8 +206,7 @@ class AdsBlockVpnService : VpnService() {
             Logger.e("AdsBlockVpnService", "Error closing VPN interface", e)
         }
         vpnInterface = null
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.cancel(NOTIFICATION_ID)
+        stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
