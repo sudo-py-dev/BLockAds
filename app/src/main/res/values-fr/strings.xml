@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BlockAds</string>
+    <string name="app_name">BloquePubs</string>
     <string name="vpn_connected">VPN Connecté</string>
     <string name="vpn_disconnected">VPN Déconnecté</string>
     <string name="tap_to_connect">Appuyez pour connecter</string>
@@ -63,4 +63,10 @@
     <string name="pause_duration_1h">1 Heure</string>
     <string name="notification_paused_title">BlockAds VPN (En Pause)</string>
     <string name="notification_paused_text">Le blocage des pubs est en pause.</string>
+    <string name="custom_dns">DNS Personnalisé</string>
+    <string name="custom">Personnalisé</string>
+    <string name="notification_fallback_title">DNS de secours actif</string>
+    <string name="notification_fallback_text">Le DNS principal ne répond pas. Utilisation du DNS de secours.</string>
+    <string name="notification_recovery_title">DNS restauré</string>
+    <string name="notification_recovery_text">Le DNS principal répond à nouveau.</string>
 </resources>

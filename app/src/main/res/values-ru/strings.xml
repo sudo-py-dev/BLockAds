@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BlockAds</string>
+    <string name="app_name">БлокРекламы</string>
     <string name="vpn_connected">VPN подключен</string>
     <string name="vpn_disconnected">VPN отключен</string>
     <string name="tap_to_connect">Нажмите для подключения</string>
@@ -63,4 +63,10 @@
     <string name="pause_duration_1h">1 Час</string>
     <string name="notification_paused_title">BlockAds VPN (Пауза)</string>
     <string name="notification_paused_text">Блокировка рекламы приостановлена.</string>
+    <string name="custom_dns">Свой DNS</string>
+    <string name="custom">Свой</string>
+    <string name="notification_fallback_title">Резервный DNS активен</string>
+    <string name="notification_fallback_text">Основной DNS не отвечает. Используется резервный.</string>
+    <string name="notification_recovery_title">DNS восстановлен</string>
+    <string name="notification_recovery_text">Основной DNS снова отвечает.</string>
 </resources>

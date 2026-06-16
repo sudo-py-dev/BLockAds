@@ -24,6 +24,7 @@ class DnsTunnel(
     private val tunFd: java.io.FileDescriptor,
     private val upstreamDnsIp: String,
     private val scope: CoroutineScope,
+    private val onFallbackStateChanged: ((Boolean) -> Unit)? = null,
 ) {
     private var isRunning = false
 
@@ -31,10 +32,16 @@ class DnsTunnel(
     var isPaused = false
     private val upstreamAddress = InetAddress.getByName(upstreamDnsIp)
 
+    @Volatile
+    var isFallbackActive = false
+    private var consecutiveTimeouts = 0
+    private val timeoutThreshold = 5
+    private val fallbackAddress = InetAddress.getByName("94.140.14.14") // AdGuard DNS
+
     // Track pending DNS requests: Transaction ID -> ClientInfo
     private val requestMap = java.util.concurrent.ConcurrentHashMap<Short, ClientInfo>()
 
-    data class ClientInfo(val sourceIp: Int, val sourcePort: Short, val destIp: Int, val destPort: Short, val domain: String)
+    data class ClientInfo(val sourceIp: Int, val sourcePort: Short, val destIp: Int, val destPort: Short, val domain: String, val timestamp: Long)
 
     fun start() {
         if (isRunning) return
@@ -56,7 +63,8 @@ class DnsTunnel(
                         udpSocket.receive(udpPacket)
                         
                         // Security check: Verify response comes from the expected upstream DNS server
-                        if (udpPacket.address != upstreamAddress || udpPacket.port != 53) {
+                        val expectedAddress = if (isFallbackActive) fallbackAddress else upstreamAddress
+                        if (udpPacket.address != expectedAddress || udpPacket.port != 53) {
                             continue 
                         }
 
@@ -65,6 +73,7 @@ class DnsTunnel(
                             val txId = ByteBuffer.wrap(recvBuffer, 0, 2).getShort()
                             val clientInfo = requestMap.remove(txId)
                             if (clientInfo != null) {
+                                consecutiveTimeouts = 0 // Reset timeouts on successful response
                                 val payload = recvBuffer.copyOfRange(0, responseLen)
 
                                 try {
@@ -105,6 +114,63 @@ class DnsTunnel(
                     } catch (e: Exception) {
                         if (isRunning) Logger.e("DnsTunnel", "Error receiving from upstream", e)
                     }
+                }
+            }
+
+            // Timeout tracker
+            launch(Dispatchers.Default) {
+                while (isRunning) {
+                    val now = System.currentTimeMillis()
+                    var timeoutsInThisTick = 0
+                    val iter = requestMap.iterator()
+                    while (iter.hasNext()) {
+                        val entry = iter.next()
+                        if (now - entry.value.timestamp > 3000) { // 3 seconds timeout
+                            iter.remove()
+                            timeoutsInThisTick++
+                        }
+                    }
+                    if (timeoutsInThisTick > 0 && !isFallbackActive) {
+                        consecutiveTimeouts += timeoutsInThisTick
+                        if (consecutiveTimeouts >= timeoutThreshold) {
+                            isFallbackActive = true
+                            onFallbackStateChanged?.invoke(true)
+                        }
+                    }
+                    kotlinx.coroutines.delay(1000)
+                }
+            }
+
+            // Recovery polling
+            launch(Dispatchers.IO) {
+                while (isRunning) {
+                    if (isFallbackActive) {
+                        try {
+                            val testSocket = DatagramSocket()
+                            vpnService.protect(testSocket)
+                            testSocket.soTimeout = 2000
+                            
+                            val record = org.xbill.DNS.Record.newRecord(org.xbill.DNS.Name.fromString("google.com."), org.xbill.DNS.Type.A, org.xbill.DNS.DClass.IN)
+                            val query = org.xbill.DNS.Message.newQuery(record)
+                            val queryBytes = query.toWire()
+                            
+                            val packet = DatagramPacket(queryBytes, queryBytes.size, upstreamAddress, 53)
+                            testSocket.send(packet)
+                            
+                            val responseBuf = ByteArray(1024)
+                            val respPacket = DatagramPacket(responseBuf, responseBuf.size)
+                            testSocket.receive(respPacket)
+                            
+                            isFallbackActive = false
+                            consecutiveTimeouts = 0
+                            onFallbackStateChanged?.invoke(false)
+                            
+                            testSocket.close()
+                        } catch (e: Exception) {
+                            // Still down
+                        }
+                    }
+                    kotlinx.coroutines.delay(if (isFallbackActive) 10000 else 1000)
                 }
             }
 
@@ -169,11 +235,12 @@ class DnsTunnel(
             }
 
             val txId = ByteBuffer.wrap(payload, 0, 2).getShort()
-            requestMap[txId] = ClientInfo(sourceIp, sourcePort, destIp, destPort, domain)
+            requestMap[txId] = ClientInfo(sourceIp, sourcePort, destIp, destPort, domain, System.currentTimeMillis())
 
             DnsStatsManager.incrementTotal()
 
-            val outAddress = if (isPaused) InetAddress.getByName("8.8.8.8") else upstreamAddress
+            val activeUpstream = if (isFallbackActive) fallbackAddress else upstreamAddress
+            val outAddress = if (isPaused) InetAddress.getByName("1.1.1.1") else activeUpstream
             val outPacket = DatagramPacket(payload, payloadLen, outAddress, 53)
             withContext(Dispatchers.IO) {
                 udpSocket.send(outPacket)

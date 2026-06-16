@@ -25,7 +25,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -149,17 +149,7 @@ fun HomeScreen(
 
         // Shield Button
         Box(
-            modifier =
-                Modifier
-                    .size(200.dp)
-                    .clickable {
-                        if (isConnected) {
-                            onToggleVpn(false)
-                        } else {
-                            DnsStatsManager.reset()
-                            onToggleVpn(true)
-                        }
-                    },
+            modifier = Modifier.size(200.dp),
             contentAlignment = Alignment.Center,
         ) {
             if (isConnected && !isPaused) {
@@ -186,7 +176,16 @@ fun HomeScreen(
                     Modifier
                         .size(160.dp)
                         .shadow(if (isConnected) 24.dp else 8.dp, CircleShape, spotColor = statusColor)
-                        .background(buttonGradient, CircleShape),
+                        .clip(CircleShape)
+                        .background(buttonGradient)
+                        .clickable {
+                            if (isConnected) {
+                                onToggleVpn(false)
+                            } else {
+                                DnsStatsManager.reset()
+                                onToggleVpn(true)
+                            }
+                        },
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
@@ -329,7 +328,7 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        val providerName = DnsProviders.getNameByIp(dnsProviderIp)
+                        val providerName = DnsProviders.getNameByIp(dnsProviderIp) ?: stringResource(R.string.custom_dns)
                         CompanyAvatar(name = providerName)
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
@@ -340,7 +339,7 @@ fun HomeScreen(
                     }
                 }
                 Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = stringResource(R.string.desc_select_dns),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                 )
@@ -392,6 +391,7 @@ fun HomeScreen(
     }
 }
 
+@Suppress("DEPRECATION")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DnsSelectionSheetContent(
@@ -421,9 +421,25 @@ fun DnsSelectionSheetContent(
                 it.key.contains(searchQuery, ignoreCase = true) || it.value.contains(searchQuery, ignoreCase = true)
             }
 
+        val isCustomIp = android.util.Patterns.IP_ADDRESS.matcher(searchQuery).matches()
+
         LazyColumn(
             contentPadding = PaddingValues(bottom = 32.dp),
         ) {
+            if (isCustomIp && filteredList.none { it.value == searchQuery }) {
+                item {
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.custom_dns), fontWeight = FontWeight.SemiBold) },
+                        supportingContent = { Text(searchQuery) },
+                        leadingContent = { CompanyAvatar(name = stringResource(R.string.custom)) },
+                        modifier = Modifier.padding(vertical = 4.dp).clip(RoundedCornerShape(16.dp)).clickable { onSelect(searchQuery) },
+                        colors =
+                            ListItemDefaults.colors(
+                                containerColor = if (searchQuery == currentIp) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                            ),
+                    )
+                }
+            }
             items(filteredList.toList()) { entry ->
                 ListItem(
                     headlineContent = { Text(entry.key, fontWeight = FontWeight.SemiBold) },

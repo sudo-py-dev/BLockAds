@@ -110,6 +110,24 @@ class BlockAdsVpnService : VpnService() {
         manager.notify(NOTIFICATION_ID, builder.build())
     }
 
+    private fun handleFallbackStateChange(isFallback: Boolean) {
+        val manager = getSystemService(NotificationManager::class.java)
+        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setAutoCancel(true)
+
+        if (isFallback) {
+            builder.setContentTitle(getString(R.string.notification_fallback_title))
+            builder.setContentText(getString(R.string.notification_fallback_text))
+            builder.setSmallIcon(android.R.drawable.stat_notify_error)
+        } else {
+            builder.setContentTitle(getString(R.string.notification_recovery_title))
+            builder.setContentText(getString(R.string.notification_recovery_text))
+            builder.setSmallIcon(android.R.drawable.stat_sys_warning)
+        }
+
+        manager.notify(2, builder.build())
+    }
+
     private fun pauseVpn(durationMins: Long) {
         dnsTunnel?.isPaused = true
         updateNotification()
@@ -139,7 +157,7 @@ class BlockAdsVpnService : VpnService() {
                 val upstreamDnsIp = settings.dnsProvider.first()
 
                 val builder = Builder()
-                builder.setSession("BlockAds")
+                builder.setSession(getString(R.string.app_name))
                 builder.addAddress("10.0.0.2", 32)
 
                 val virtualDnsIp = "10.0.0.1"
@@ -150,7 +168,9 @@ class BlockAdsVpnService : VpnService() {
                 vpnInterface = builder.establish()
 
                 vpnInterface?.let {
-                    dnsTunnel = DnsTunnel(this@BlockAdsVpnService, it.fileDescriptor, upstreamDnsIp, serviceScope)
+                    dnsTunnel = DnsTunnel(this@BlockAdsVpnService, it.fileDescriptor, upstreamDnsIp, serviceScope) { isFallback ->
+                        handleFallbackStateChange(isFallback)
+                    }
                     dnsTunnel?.start()
                     updateNotification()
                 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BlockAds</string>
+    <string name="app_name">חוסם פרסומות</string>
     <string name="vpn_connected">ה-VPN מחובר</string>
     <string name="vpn_disconnected">ה-VPN מנותק</string>
     <string name="tap_to_connect">הקש להתחברות</string>
@@ -63,4 +63,10 @@
     <string name="pause_duration_1h">שעה 1</string>
     <string name="notification_paused_title">BlockAds VPN (מושהה)</string>
     <string name="notification_paused_text">חסימת הפרסומות מושהית.</string>
+    <string name="custom_dns">DNS מותאם אישית</string>
+    <string name="custom">מותאם אישית</string>
+    <string name="notification_fallback_title">DNS גיבוי פעיל</string>
+    <string name="notification_fallback_text">ה-DNS הראשי אינו מגיב. משתמש בגיבוי.</string>
+    <string name="notification_recovery_title">DNS שוחזר</string>
+    <string name="notification_recovery_text">ה-DNS הראשי מגיב שוב.</string>
 </resources>

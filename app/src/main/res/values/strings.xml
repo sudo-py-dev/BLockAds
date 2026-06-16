@@ -46,7 +46,7 @@
     
     <string name="stats_queries">Queries</string>
     <string name="stats_blocked">Blocked</string>
-    <string name="search_dns">Search DNS</string>
+    <string name="search_dns">Search or enter custom IP...</string>
     <string name="desc_vpn_shield">VPN Shield</string>
     <string name="desc_select_dns">Select DNS</string>
     <string name="desc_dropdown_open">Open Dropdown</string>
@@ -63,4 +63,10 @@
     <string name="pause_duration_1h">1 Hour</string>
     <string name="notification_paused_title">BlockAds VPN (Paused)</string>
     <string name="notification_paused_text">Ad-blocking is paused.</string>
+    <string name="custom_dns">Custom DNS</string>
+    <string name="custom">Custom</string>
+    <string name="notification_fallback_title">DNS Fallback Active</string>
+    <string name="notification_fallback_text">Primary DNS not responding. Using fallback.</string>
+    <string name="notification_recovery_title">DNS Restored</string>
+    <string name="notification_recovery_text">Primary DNS is responding again.</string>
 </resources>
