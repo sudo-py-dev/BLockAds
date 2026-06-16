@@ -13,6 +13,11 @@
     <string name="settings_title">Settings</string>
     <string name="setting_dns_provider">DNS Provider</string>
     <string name="setting_theme">Theme</string>
+    <string name="setting_auto_connect">Auto-connect on Boot</string>
+    <string name="setting_auto_connect_desc">Automatically start the VPN when the device turns on</string>
+    <string name="always_on_vpn_title">Tip: Always-on VPN</string>
+    <string name="always_on_vpn_desc">For maximum security and to ensure all apps are filtered, enable "Always-on VPN" and "Block connections without VPN" in your Android system settings.</string>
+    <string name="btn_open_system_vpn">Open System VPN Settings</string>
     <string name="setting_language">Language</string>
     
     <string name="theme_system">System Default</string>
@@ -65,8 +70,24 @@
     <string name="notification_paused_text">Ad-blocking is paused.</string>
     <string name="custom_dns">Custom DNS</string>
     <string name="custom">Custom</string>
-    <string name="notification_fallback_title">DNS Fallback Active</string>
-    <string name="notification_fallback_text">Primary DNS not responding. Using fallback.</string>
+    <string name="notification_fallback_title">Fallback Active</string>
+    <string name="notification_fallback_text">Primary DNS timeout. Switching to fallback...</string>
     <string name="notification_recovery_title">DNS Restored</string>
     <string name="notification_recovery_text">Primary DNS is responding again.</string>
+
+    <!-- DNS Providers -->
+    <string name="dns_adguard_recommended">AdGuard (Recommended Ad Block)</string>
+    <string name="dns_adguard_2">AdGuard Alternative</string>
+    <string name="dns_adguard_family">AdGuard Family Filter</string>
+    <string name="dns_adguard_family_2">AdGuard Family Alternative</string>
+    <string name="dns_controld_adblock">Control D (Ad Block)</string>
+    <string name="dns_mullvad_adblock">Mullvad (Ad Block)</string>
+    <string name="dns_mullvad_tracker">Mullvad (Ad &amp; Tracker Block)</string>
+    <string name="dns_cloudflare_security">Cloudflare Security (Malware)</string>
+    <string name="dns_cloudflare_family">Cloudflare Family (Malware + Adult)</string>
+    <string name="dns_cleanbrowsing_family">CleanBrowsing (Family)</string>
+    <string name="dns_cleanbrowsing_adult">CleanBrowsing (Adult)</string>
+    <string name="dns_quad9_malware">Quad9 Security (Malware Block)</string>
+    <string name="dns_alternate_dns">Alternate DNS</string>
+    <string name="dns_alternate_dns_2">Alternate DNS Alternative</string>
 </resources>

@@ -18,11 +18,15 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Settings
+import android.content.Intent
+import android.provider.Settings
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -35,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -53,6 +58,7 @@ fun SettingsScreen(
 
     val theme by settingsRepository.theme.collectAsState(initial = "system")
     val language by settingsRepository.language.collectAsState(initial = "system")
+    val autoConnectOnBoot by settingsRepository.autoConnectOnBoot.collectAsState(initial = false)
 
     val themesList =
         listOf(
@@ -112,6 +118,52 @@ fun SettingsScreen(
             },
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Auto-connect Toggle
+        Surface(
+            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)),
+            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+            tonalElevation = 1.dp,
+        ) {
+            Row(
+                modifier = Modifier.padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = stringResource(R.string.setting_auto_connect),
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(28.dp),
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Column {
+                        Text(
+                            text = stringResource(R.string.setting_auto_connect),
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = stringResource(R.string.setting_auto_connect_desc),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Switch(
+                    checked = autoConnectOnBoot,
+                    onCheckedChange = { isChecked ->
+                        coroutineScope.launch {
+                            settingsRepository.setAutoConnectOnBoot(isChecked)
+                        }
+                    }
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(32.dp))
 
         // Logs Navigation Card
@@ -155,6 +207,47 @@ fun SettingsScreen(
                     contentDescription = "Open Logs",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                 )
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(32.dp))
+
+        val context = LocalContext.current
+        Surface(
+            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)),
+            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+            tonalElevation = 1.dp,
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = stringResource(R.string.always_on_vpn_title),
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.always_on_vpn_desc),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = {
+                        val intent = Intent(Settings.ACTION_VPN_SETTINGS)
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = stringResource(R.string.btn_open_system_vpn))
+                }
             }
         }
     }

@@ -328,7 +328,8 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        val providerName = DnsProviders.getNameByIp(dnsProviderIp) ?: stringResource(R.string.custom_dns)
+                        val providerNameResId = DnsProviders.getNameResByIp(dnsProviderIp)
+                        val providerName = providerNameResId?.let { stringResource(it) } ?: stringResource(R.string.custom_dns)
                         CompanyAvatar(name = providerName)
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
@@ -417,8 +418,9 @@ fun DnsSelectionSheetContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         val filteredList =
-            DnsProviders.providers.entries.filter {
-                it.key.contains(searchQuery, ignoreCase = true) || it.value.contains(searchQuery, ignoreCase = true)
+            DnsProviders.providers.filter { provider ->
+                val name = stringResource(provider.nameResId)
+                name.contains(searchQuery, ignoreCase = true) || provider.ip.contains(searchQuery, ignoreCase = true)
             }
 
         val isCustomIp = android.util.Patterns.IP_ADDRESS.matcher(searchQuery).matches()
@@ -426,7 +428,7 @@ fun DnsSelectionSheetContent(
         LazyColumn(
             contentPadding = PaddingValues(bottom = 32.dp),
         ) {
-            if (isCustomIp && filteredList.none { it.value == searchQuery }) {
+            if (isCustomIp && filteredList.none { it.ip == searchQuery }) {
                 item {
                     ListItem(
                         headlineContent = { Text(stringResource(R.string.custom_dns), fontWeight = FontWeight.SemiBold) },
@@ -440,15 +442,16 @@ fun DnsSelectionSheetContent(
                     )
                 }
             }
-            items(filteredList.toList()) { entry ->
+            items(filteredList) { provider ->
+                val name = stringResource(provider.nameResId)
                 ListItem(
-                    headlineContent = { Text(entry.key, fontWeight = FontWeight.SemiBold) },
-                    supportingContent = { Text(entry.value) },
-                    leadingContent = { CompanyAvatar(name = entry.key) },
-                    modifier = Modifier.padding(vertical = 4.dp).clip(RoundedCornerShape(16.dp)).clickable { onSelect(entry.value) },
+                    headlineContent = { Text(name, fontWeight = FontWeight.SemiBold) },
+                    supportingContent = { Text(provider.ip) },
+                    leadingContent = { CompanyAvatar(name = name) },
+                    modifier = Modifier.padding(vertical = 4.dp).clip(RoundedCornerShape(16.dp)).clickable { onSelect(provider.ip) },
                     colors =
                         ListItemDefaults.colors(
-                            containerColor = if (entry.value == currentIp) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                            containerColor = if (provider.ip == currentIp) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
                         ),
                 )
             }
